@@ -36,7 +36,7 @@ export default function ServicesPage() {
           </Reveal>
         </Container>
 
-        <ServicesAccordion />
+        <ServicesAccordion hideHeading />
         <EngagementTypes />
         <ChatTeaser />
       </main>

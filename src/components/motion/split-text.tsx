@@ -1,5 +1,6 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 type Props = {
   text: string;
@@ -10,7 +11,7 @@ type Props = {
   by?: "word" | "char";
 };
 
-/** Editorial word-by-word (or char) hero reveal. */
+/** Editorial word-by-word (or char) hero reveal. SSR-safe. */
 export function SplitText({
   text,
   className,
@@ -19,11 +20,15 @@ export function SplitText({
   by = "word",
 }: Props) {
   const reduced = useReducedMotion();
-  const items = by === "word" ? text.split(" ") : Array.from(text);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  if (reduced) {
+  // SSR + first paint: render plain text. Hydration-safe regardless of motion preference.
+  if (!mounted || reduced) {
     return <span className={className}>{text}</span>;
   }
+
+  const items = by === "word" ? text.split(" ") : Array.from(text);
 
   return (
     <span className={className} aria-label={text}>

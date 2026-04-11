@@ -13,14 +13,20 @@ type Props = {
 export function RotatingTagline({ taglines, interval = 4000, className }: Props) {
   const reduced = useReducedMotion();
   const [i, setI] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (reduced) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (reduced || !mounted) return;
     const t = setInterval(() => setI((v) => (v + 1) % taglines.length), interval);
     return () => clearInterval(t);
-  }, [taglines.length, interval, reduced]);
+  }, [taglines.length, interval, reduced, mounted]);
 
-  if (reduced) {
+  // SSR + first paint: render the first tagline statically.
+  if (!mounted || reduced) {
     return <span className={className}>{taglines[0]}</span>;
   }
 

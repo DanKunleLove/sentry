@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# QA screenshot output (regenerated locally via `node scripts/qa-screenshots.mjs`)
+/qa-screenshots/

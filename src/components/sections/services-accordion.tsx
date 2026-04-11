@@ -6,20 +6,22 @@ import { Reveal } from "@/components/motion/reveal";
 import { services } from "@/content/services";
 import { cn } from "@/lib/cn";
 
-export function ServicesAccordion() {
+export function ServicesAccordion({ hideHeading = false }: { hideHeading?: boolean } = {}) {
   const [open, setOpen] = useState<string | null>(services[0]?.id ?? null);
 
   return (
     <section id="services" className="section-y">
       <Container>
-        <Reveal>
-          <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/50">
-            Services
-          </p>
-          <h2 className="display-md mb-16 max-w-2xl">
-            Five lanes. One operator.
-          </h2>
-        </Reveal>
+        {!hideHeading && (
+          <Reveal>
+            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/50">
+              Services
+            </p>
+            <h2 className="display-md mb-16 max-w-2xl">
+              Five lanes. One operator.
+            </h2>
+          </Reveal>
+        )}
 
         <ul className="flex flex-col divide-y divide-bone/10 border-y border-bone/10">
           {services.map((s) => {

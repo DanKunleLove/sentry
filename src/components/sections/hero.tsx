@@ -68,7 +68,15 @@ export function Hero() {
 function PortraitCard() {
   return (
     <div className="glass relative flex h-[420px] w-[280px] flex-col justify-end overflow-hidden p-5">
-      {/* Replace /images/adk-portrait.webp once the real image is added */}
+      {/* Graceful gradient fallback — slots the real image in once /images/adk-portrait.webp exists */}
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-20"
+        style={{
+          background:
+            "radial-gradient(120% 80% at 50% 30%, rgba(255,91,31,0.35) 0%, rgba(255,91,31,0.08) 35%, rgba(10,10,12,1) 75%)",
+        }}
+      />
       <div
         className="absolute inset-0 -z-10 bg-cover bg-center grayscale-[0.1]"
         style={{
