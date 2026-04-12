@@ -4,7 +4,6 @@ export const primaryNav: NavLink[] = [
   { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
-  { label: "Creative", href: "/creative" },
   { label: "Now", href: "/now" },
 ];
 

@@ -14,7 +14,7 @@ export function FeaturedWorks() {
               Selected work
             </p>
             <h2 className="display-md max-w-xl">
-              Products built. Clients paid. Four countries.
+              Products built. Clients served. Multiple countries.
             </h2>
           </div>
           <Link

@@ -1,56 +1,80 @@
 export const hero = {
   name: "Adelusi Dan Kunle",
-  roles: ["AI Engineer", "LLM Specialist", "Automation Architect"],
-  lede: "Shipping production AI products, agent systems and automation pipelines for paying clients across UK · US · Canada · Dubai.",
+  roles: ["AI & Automation Architect", "LLM Specialist", "AI Engineer"],
+  lede: "Shipping production AI products, agent systems and automation pipelines for clients across UK · US · Canada · Dubai · and beyond.",
   location: "Lagos, Nigeria — Remote worldwide",
 };
 
 export const taglines: string[] = [
-  "Shipping LLM products to four countries",
-  "Full-stack. Full-spectrum. Full-throttle.",
-  "AI Engineer · AI Trainer · Creative-AI Producer",
+  "Orchestrating AI across the full stack",
+  "From idea to deployed product — end to end",
+  "AI Engineer · Automation Architect · LLM Specialist",
   "First-principles thinking, fast execution",
   "Available: freelance · contract · remote · full-time",
 ];
 
 export const techMarquee: string[] = [
-  "Next.js 16",
-  "Gemini 2.5",
+  // AI & LLMs
   "Claude",
   "OpenAI",
+  "Gemini 2.5",
   "DeepSeek",
   "OpenRouter",
-  "Supabase",
-  "n8n",
+  // AI Content & Creative
+  "HeyGen",
+  "Sora",
+  "Midjourney",
+  "Flux",
+  "ElevenLabs",
+  "MuseTalk",
+  "Runway",
+  "Grok Aurora",
+  // Development
+  "Next.js",
+  "React Native",
   "FastAPI",
-  "LiveKit",
-  "Cerebras",
-  "Cartesia",
+  "Supabase",
+  "Cursor",
+  "Capacitor",
+  // Automation & CRM
+  "n8n",
+  "Make.com",
+  "Zapier",
+  "GoHighLevel",
+  "HubSpot",
+  "Chatwoot",
+  "Monday.com",
+  // Infrastructure
   "RunPod",
   "Cloudflare R2",
   "DigitalOcean",
-  "Flux",
-  "Midjourney",
-  "ElevenLabs",
-  "MuseTalk",
-  "React Native",
-  "Capacitor",
+  "Vercel",
+  // Marketing & E-commerce
+  "Google Ads",
+  "Google Merchant",
+  "Shopify",
+  "WordPress",
+  "Elementor",
+  // Voice & Real-time
+  "LiveKit",
+  "Cerebras",
+  "Cartesia",
 ];
 
 export const stats: { value: string; label: string }[] = [
-  { value: "4", label: "Countries served" },
+  { value: "4+", label: "Years of experience" },
   { value: "20+", label: "Products shipped" },
+  { value: "4+", label: "Countries served" },
   { value: "47", label: "Phantm endpoints" },
   { value: "4.5", label: "CGPA / 5.0" },
-  { value: "2026", label: "Red Bull Basement" },
 ];
 
 export const bio = {
-  headline: "AI engineer who ships across the stack.",
+  headline: "AI & Automation Architect who ships across the stack.",
   paragraphs: [
-    "I build production AI products end-to-end — from LLM integration and agent orchestration to full-stack delivery, voice interfaces, and creative-AI production. Based in Lagos, working with paying clients across the UK, US, Canada, and Dubai.",
-    "As a Founding Member & Lead AI Specialist at Mabi Labs, I architect and ship AI systems for international clients. As the sole AI engineer at SourceXAI, I own entire product lifecycles — LLM pipelines, chatbot architecture, automation design. On the side I evaluate AI models for Outlier, Mercor, and Scale AI — RLHF, preference ranking, factuality, code correctness.",
-    "I'm in my final year of Physics & Computer Science at Federal University Oye Ekiti (CGPA 4.5/5.0, First-Class track). The physics background gives me a first-principles edge on systems thinking — but the work is AI, end-to-end.",
-    "Open to freelance projects, long-term contracts, remote full-time roles, technical advisory, and AI training / evaluation engagements. If you're building something with AI at its core, I want to hear about it.",
+    "I'm Adelusi Dan Kunle — an AI & Automation Architect based in Lagos, Nigeria. I build production AI products, agent systems, and automation pipelines for clients across the UK, US, Canada, Dubai, and beyond.",
+    "My path into AI started at the intersection of Physics and Computer Science at Federal University Oye Ekiti, where I developed a first-principles approach to problem-solving. From there, I moved quickly into production AI — shipping LLM integrations, voice agents, multi-workflow automations, and creative-AI pipelines for international clients.",
+    "Beyond the technical, I bring leadership and innovative thinking to every project. I served as Vice President of the Physics Department (2024–2025 session) and as Administrative Assistant in the Student Union Government, serving a university of over 50,000 students. I'm consistently at the top of my class academically (4.5/5.0 CGPA) and bring that same rigour to every product I ship.",
+    "I'm building at the intersection of AI, automation, and human creativity — making intelligent systems accessible to businesses of all sizes. Whether it's an AI agent that handles your customer support, an automation pipeline that saves your team days of manual work, or a creative AI system that produces content at scale — I orchestrate the tools to make it happen.",
   ],
 };

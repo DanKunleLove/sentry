@@ -1,10 +1,10 @@
 /** Canonical site constants used across metadata, JSON-LD, and links. */
 export const site = {
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://sentry-dankunle.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://adelusidankunle.vercel.app",
   name: "Adelusi Dan Kunle",
-  title: "Adelusi Dan Kunle — AI Engineer · Automation Architect · LLM Specialist",
+  title: "Adelusi Dan Kunle — AI & Automation Architect · LLM Specialist",
   description:
-    "AI Engineer, LLM Specialist, and Automation Architect shipping production AI products and automation pipelines for international clients.",
+    "AI & Automation Architect shipping production AI products, agent systems, and automation pipelines for international clients.",
   email: "adelusidankunle@gmail.com",
   location: "Lagos, Nigeria",
   socials: {

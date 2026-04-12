@@ -14,12 +14,23 @@ export function Footer() {
               <br />
               something real.
             </p>
-            <a
-              href={`mailto:${site.email}`}
-              className="mt-6 inline-block font-mono text-sm uppercase tracking-wider text-accent hover:underline"
-            >
-              {site.email} →
-            </a>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <a
+                href={`mailto:${site.email}`}
+                className="inline-flex h-12 items-center gap-2 rounded-full bg-accent px-6 font-mono text-xs uppercase tracking-wider text-ink transition-all hover:-translate-y-[1px]"
+              >
+                Get in touch →
+              </a>
+              <Link
+                href="/chat"
+                className="inline-flex h-12 items-center gap-2 rounded-full border border-bone/16 px-6 font-mono text-xs uppercase tracking-wider text-bone transition-all hover:border-accent hover:text-accent"
+              >
+                Ask my AI twin
+              </Link>
+            </div>
+            <p className="mt-6 font-mono text-xs uppercase tracking-wider text-bone/50">
+              {site.email}
+            </p>
           </div>
 
           <div className="flex flex-col gap-3 md:items-end">

@@ -24,7 +24,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://sentry-dankunle.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://adelusidankunle.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -65,14 +65,14 @@ export const metadata: Metadata = {
     title:
       "Adelusi Dan Kunle — AI Engineer · Automation Architect · LLM Specialist",
     description:
-      "Shipping production AI products to paying clients across UK, US, Canada, and Dubai. Open to freelance, contract, remote and full-time roles.",
+      "Shipping production AI products, agent systems, and automation pipelines to clients across UK, US, Canada, Dubai, and beyond. Open to freelance, contract, remote and full-time roles.",
   },
   twitter: {
     card: "summary_large_image",
     creator: "@dankunle_01",
     title: "Adelusi Dan Kunle — AI Engineer · LLM Specialist",
     description:
-      "Shipping production AI to paying clients in four countries. Available worldwide.",
+      "Shipping production AI to clients across multiple countries. Available worldwide.",
   },
   robots: {
     index: true,

@@ -190,9 +190,9 @@ export const works: Work[] = [
   {
     slug: "telos",
     title: "TELOS",
-    tagline: "AI Freelance Success Platform — Red Bull Basement 2026",
+    tagline: "AI-powered freelancer career-optimisation platform",
     year: 2025,
-    client: "Mabi Labs · Red Bull Basement 2026",
+    client: "Mabi Labs",
     role: "Founder & Product Architect",
     status: "concept",
     categories: ["ai", "platform", "agent"],
@@ -204,12 +204,11 @@ export const works: Work[] = [
       height: 900,
     },
     metrics: [
-      { label: "Programme", value: "Red Bull Basement 2026" },
-      { label: "Stage", value: "Submitted" },
+      { label: "Stage", value: "Architecture" },
       { label: "Thesis", value: "AI-assisted freelancing" },
     ],
     summary:
-      "Founded and submitted TELOS — an AI-powered freelancer career-optimisation platform — to the Red Bull Basement 2026 Global Innovation Programme. Designed for AI job matching, performance analytics, intelligent growth coaching, and marketplace-success reverse-engineering.",
+      "Founded TELOS — an AI-powered freelancer career-optimisation platform. Designed for AI job matching, performance analytics, intelligent growth coaching, and marketplace-success reverse-engineering.",
     reasoning:
       "Most freelance platforms optimize for the buyer. TELOS inverts that: the AI agent works for the freelancer, continually analyzing marketplace signals, matching them to the right jobs, coaching them on proposals, and reverse-engineering what makes top-earners win. It's a long-term career copilot, not a job board.",
     problem:
@@ -221,12 +220,11 @@ export const works: Work[] = [
       "Reverse-engineering tools that analyse top-performer profiles and proposals.",
     ],
     outcome: [
-      "Product vision submitted to Red Bull Basement 2026.",
-      "Core architecture designed for a Q3 2026 build.",
+      "Core architecture designed.",
       "Thesis validated via direct outreach to top freelancers.",
     ],
     tags: ["Freelance Platform", "Career Coaching", "AI Agent", "Analytics"],
-    featured: true,
+    featured: false,
     order: 5,
   },
   {
@@ -266,7 +264,7 @@ export const works: Work[] = [
       "Plays directly into the broader AI-twin thesis (see Phantm, /chat).",
     ],
     tags: ["Digital Twin", "Voice", "Presence", "Agent"],
-    featured: true,
+    featured: false,
     order: 6,
   },
   {
@@ -293,7 +291,7 @@ export const works: Work[] = [
       { label: "Focus", value: "AI automation" },
     ],
     summary:
-      "The second iteration of the Mabi Labs agency site — a positioning refresh for an AI automation and software agency serving paying clients across the UK, US, Canada, and Dubai.",
+      "The second iteration of the Mabi Labs agency site — a positioning refresh for an AI automation and software agency serving clients across the UK, US, Canada, and Dubai.",
     reasoning:
       "Agency websites usually over-explain. V2 strips the site to three promises — ship fast, ship production-grade AI, serve global clients — and lets the work speak for the rest.",
     problem:
@@ -388,46 +386,6 @@ export const works: Work[] = [
     tags: ["iOS", "Chemistry", "Premium", "App Store"],
     featured: false,
     order: 9,
-  },
-  {
-    slug: "lenticular",
-    title: "Lenticular Art Marketplace",
-    tagline: "E-commerce with bidirectional Notion sync",
-    year: 2024,
-    client: "Independent client",
-    role: "Sole Engineer",
-    status: "shipped",
-    categories: ["full-stack", "platform"],
-    stack: ["React", "Supabase", "Base44", "Notion API", "Cloudflare R2"],
-    cover: {
-      src: "/images/work/lenticular-cover.webp",
-      alt: "Lenticular art marketplace",
-      width: 1600,
-      height: 900,
-    },
-    metrics: [
-      { label: "Bandwidth reduction", value: "~95%" },
-      { label: "Catalog sync", value: "Notion ⇌" },
-    ],
-    summary:
-      "A React/Supabase/Base44 lenticular-art marketplace with bidirectional Notion sync, dual-bucket image compression (~95% bandwidth reduction), and a full e-commerce pipeline.",
-    reasoning:
-      "The client managed their catalog in Notion and wanted to keep doing that. Instead of forcing a CMS change, I built a bidirectional sync so Notion remained the source of truth while the marketplace read from a fast, optimized copy.",
-    problem:
-      "The client had thousands of high-resolution images and wanted a fast marketplace without losing their Notion-based catalog workflow.",
-    approach: [
-      "Bidirectional Notion ↔ Supabase sync with conflict resolution.",
-      "Dual-bucket image compression pipeline — original quality for buyers, compressed for browsing.",
-      "Full e-commerce pipeline with cart, checkout, and order management.",
-    ],
-    outcome: [
-      "~95% image bandwidth reduction for the browsing layer.",
-      "Notion stayed the client's source of truth — zero workflow disruption.",
-      "Marketplace shipped and operational.",
-    ],
-    tags: ["E-commerce", "Notion API", "Supabase", "Image Compression"],
-    featured: false,
-    order: 10,
   },
 ];
 

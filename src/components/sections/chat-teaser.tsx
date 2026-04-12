@@ -25,8 +25,8 @@ export function ChatTeaser() {
                 </h2>
                 <p className="mt-6 text-lg text-bone/70">
                   Built on Gemini, grounded on my projects and experience. Ask about
-                  Phantm, Mocha Property, my n8n pipelines, pricing, timelines —
-                  whatever you need to decide.
+                  Phantm, Mocha Property, my automation pipelines, timelines,
+                  availability — whatever you need to know.
                 </p>
               </div>
               <Link

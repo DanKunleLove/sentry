@@ -11,7 +11,7 @@ import { allWorks } from "@/content/works";
 export const metadata: Metadata = {
   title: "Selected Work · AI Products, Automation & Creative-AI",
   description:
-    "Ten production projects across LLM products, voice agents, n8n automation, full-stack AI, and creative-AI — shipped for paying clients across four countries.",
+    "Production projects across LLM products, voice agents, automation, full-stack AI, and creative-AI — shipped for clients across multiple countries.",
 };
 
 export default function WorkIndex() {
@@ -26,7 +26,7 @@ export default function WorkIndex() {
               The work
             </p>
             <h1 className="display-lg mb-16 max-w-3xl">
-              Ten projects. Four countries. One operator.
+              Selected projects. Multiple countries. One operator.
             </h1>
           </Reveal>
 

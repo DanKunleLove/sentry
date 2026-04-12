@@ -23,8 +23,8 @@ const building = [
   {
     title: "TELOS",
     blurb:
-      "AI freelance-success platform — submitted to Red Bull Basement 2026. Now scoping the Q3 build.",
-    status: "Scoping",
+      "AI freelance-success platform — career optimisation via AI job matching, analytics, and coaching.",
+    status: "Architecture",
   },
   {
     title: "Sentry (this site)",
