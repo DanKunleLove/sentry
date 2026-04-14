@@ -78,10 +78,10 @@ function PortraitCard() {
         }}
       />
       <div
-        className="absolute inset-0 -z-10 bg-cover bg-center grayscale-[0.1]"
+        className="absolute inset-0 -z-10 bg-cover bg-top"
         style={{
           backgroundImage:
-            "linear-gradient(180deg, rgba(10,10,12,0) 0%, rgba(10,10,12,0.85) 100%), url('/images/adk-portrait.webp')",
+            "linear-gradient(180deg, rgba(10,10,12,0) 40%, rgba(10,10,12,0.6) 100%), url('/images/adk-portrait.webp')",
         }}
       />
       <div className="flex flex-col gap-1">

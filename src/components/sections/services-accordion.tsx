@@ -1,10 +1,35 @@
 "use client";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/layout/container";
 import { Reveal } from "@/components/motion/reveal";
 import { services } from "@/content/services";
 import { cn } from "@/lib/cn";
+
+/* Lazy-load illustrations to avoid bloating initial bundle */
+const illustrations: Record<string, React.ComponentType> = {
+  "ai-engineering": dynamic(
+    () => import("@/components/illustrations/agent-flow-viz").then((m) => ({ default: m.AgentFlowViz })),
+    { ssr: false }
+  ),
+  automation: dynamic(
+    () => import("@/components/illustrations/workflow-viz").then((m) => ({ default: m.WorkflowViz })),
+    { ssr: false }
+  ),
+  "full-stack": dynamic(
+    () => import("@/components/illustrations/dashboard-viz").then((m) => ({ default: m.DashboardViz })),
+    { ssr: false }
+  ),
+  "creative-ai": dynamic(
+    () => import("@/components/illustrations/creative-ai-viz").then((m) => ({ default: m.CreativeAIViz })),
+    { ssr: false }
+  ),
+  "ai-training": dynamic(
+    () => import("@/components/illustrations/eval-viz").then((m) => ({ default: m.EvalViz })),
+    { ssr: false }
+  ),
+};
 
 export function ServicesAccordion({ hideHeading = false }: { hideHeading?: boolean } = {}) {
   const [open, setOpen] = useState<string | null>(services[0]?.id ?? null);
@@ -26,6 +51,7 @@ export function ServicesAccordion({ hideHeading = false }: { hideHeading?: boole
         <ul className="flex flex-col divide-y divide-bone/10 border-y border-bone/10">
           {services.map((s) => {
             const isOpen = open === s.id;
+            const Illustration = illustrations[s.id];
             return (
               <li key={s.id}>
                 <button
@@ -63,9 +89,18 @@ export function ServicesAccordion({ hideHeading = false }: { hideHeading?: boole
                       className="overflow-hidden"
                     >
                       <div className="grid gap-8 pb-10 md:grid-cols-[1.3fr_1fr] md:gap-16">
-                        <p className="text-lg leading-relaxed text-bone/70">
-                          {s.lede}
-                        </p>
+                        <div>
+                          <p className="text-lg leading-relaxed text-bone/70">
+                            {s.lede}
+                          </p>
+
+                          {/* Animated illustration */}
+                          {Illustration && (
+                            <div className="mt-8">
+                              <Illustration />
+                            </div>
+                          )}
+                        </div>
                         <div>
                           <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-bone/50">
                             Deliverables
