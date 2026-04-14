@@ -8,9 +8,9 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { ChatPanel } from "@/components/ai/chat-panel";
 
 export const metadata: Metadata = {
-  title: "Ask my AI twin",
+  title: "Ask my AI agent",
   description:
-    "Chat with Dan's AI twin — grounded on his real projects, services, and availability. Built on Gemini.",
+    "Talk to Dan's AI agent — grounded on his real projects, services, and availability. Built on Gemini with function calling.",
 };
 
 const embedCode = `<script src="https://adelusidankunle.vercel.app/widget/sentry-chat.min.js"
@@ -46,7 +46,7 @@ export default function ChatPage() {
                       Free &amp; open
                     </p>
                     <h2 className="font-serif text-3xl leading-tight md:text-4xl">
-                      Get this chatbot — free.
+                      Get this agent — free.
                     </h2>
                     <p className="mt-4 text-bone/70 leading-relaxed">
                       Drop an AI-powered chat widget on any website with one line

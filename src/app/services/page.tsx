@@ -31,7 +31,7 @@ export default function ServicesPage() {
             <p className="max-w-2xl text-lg text-bone/70">
               I take work across five lanes — all AI-adjacent, all production-grade,
               all delivered end-to-end. Pick the one that fits your problem, or
-              ask my AI twin if you&rsquo;re not sure.
+              ask my AI agent if you&rsquo;re not sure.
             </p>
           </Reveal>
         </Container>

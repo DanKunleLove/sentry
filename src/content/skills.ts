@@ -5,7 +5,7 @@ export const skillGroups: SkillGroup[] = [
     name: "AI Engineering",
     skills: [
       "LLM integration",
-      "AI chatbots",
+      "AI agents",
       "Voice agents",
       "Multi-agent pipelines",
       "Claude Code",

@@ -25,7 +25,7 @@ export function Footer() {
                 href="/chat"
                 className="inline-flex h-12 items-center gap-2 rounded-full border border-bone/16 px-6 font-mono text-xs uppercase tracking-wider text-bone transition-all hover:border-accent hover:text-accent"
               >
-                Ask my AI twin
+                Ask my AI agent
               </Link>
             </div>
             <p className="mt-6 font-mono text-xs uppercase tracking-wider text-bone/50">

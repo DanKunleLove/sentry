@@ -14,7 +14,7 @@ export const services: Service[] = [
     ],
     stack: ["Gemini", "Claude", "OpenAI", "OpenRouter", "DeepSeek", "Vector DBs", "Next.js"],
     iconName: "brain-circuit",
-    outcomes: ["Agentic workflows", "Grounded chatbots", "Custom copilots"],
+    outcomes: ["Agentic workflows", "Grounded AI agents", "Custom copilots"],
   },
   {
     id: "automation",

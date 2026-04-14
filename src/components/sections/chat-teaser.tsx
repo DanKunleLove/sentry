@@ -19,7 +19,7 @@ export function ChatTeaser() {
                   Live · grounded on the real résumé
                 </p>
                 <h2 className="display-md leading-[0.95]">
-                  Ask my AI twin
+                  Ask my AI agent
                   <br />
                   anything.
                 </h2>
