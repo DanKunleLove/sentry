@@ -6,6 +6,14 @@ import { PulseDot } from "@/components/ui/pulse-dot";
 
 type Msg = { role: "user" | "model"; content: string };
 
+const TOOL_LABELS: Record<string, string> = {
+  capture_lead: "Saving your contact info...",
+  notify_dan: "Notifying Dan...",
+  lookup_project: "Looking up project details...",
+  list_services: "Checking services...",
+  check_availability: "Checking availability...",
+};
+
 const SEED: Msg[] = [
   {
     role: "model",
@@ -14,36 +22,22 @@ const SEED: Msg[] = [
   },
 ];
 
-/** Extract a ```lead\n{...}\n``` block from a twin reply, if present. */
-function extractLead(text: string): {
-  lead: Record<string, unknown> | null;
-  cleaned: string;
-} {
-  const match = text.match(/```lead\n([\s\S]*?)\n```/);
-  if (!match) return { lead: null, cleaned: text };
-  try {
-    const lead = JSON.parse(match[1]);
-    const cleaned = text.replace(match[0], "").trim();
-    return { lead, cleaned };
-  } catch {
-    return { lead: null, cleaned: text };
-  }
-}
-
 export function ChatPanel() {
   const [messages, setMessages] = useState<Msg[]>(SEED);
   const [streaming, setStreaming] = useState(false);
+  const [toolActive, setToolActive] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [messages, streaming]);
+  }, [messages, streaming, toolActive]);
 
   const send = useCallback(
     async (text: string) => {
       setError(null);
+      setToolActive(null);
       const nextUser: Msg = { role: "user", content: text };
       const nextHistory = [...messages, nextUser];
       setMessages([...nextHistory, { role: "model", content: "" }]);
@@ -58,77 +52,66 @@ export function ChatPanel() {
 
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          throw new Error(
-            data.error ?? `Chat failed with status ${res.status}`
-          );
+          throw new Error(data.error ?? `Chat failed with status ${res.status}`);
         }
         if (!res.body) throw new Error("No response body.");
 
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
+        let buffer = "";
         let acc = "";
 
         while (true) {
           const { value, done } = await reader.read();
           if (done) break;
-          acc += decoder.decode(value, { stream: true });
-          setMessages((prev) => {
-            const copy = [...prev];
-            copy[copy.length - 1] = { role: "model", content: acc };
-            return copy;
-          });
-        }
+          buffer += decoder.decode(value, { stream: true });
 
-        // After stream completes, check for lead JSON block and submit
-        const { lead, cleaned } = extractLead(acc);
-        if (cleaned !== acc) {
-          setMessages((prev) => {
-            const copy = [...prev];
-            copy[copy.length - 1] = { role: "model", content: cleaned };
-            return copy;
-          });
-        }
-        if (lead && typeof lead.email === "string") {
-          try {
-            await fetch("/api/lead", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...lead, source: "chat" }),
-            });
-          } catch (leadErr) {
-            console.error("lead submit failed", leadErr);
-          }
-        } else {
-          // Fallback: scan user messages for email if AI didn't emit lead block
-          const emailRe = /[\w.+-]+@[\w.-]+\.\w{2,}/;
-          const userText = nextHistory
-            .filter((m) => m.role === "user")
-            .map((m) => m.content)
-            .join(" ");
-          const emailMatch = userText.match(emailRe);
-          if (emailMatch) {
+          // Process complete lines (newline-delimited JSON events)
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? ""; // Keep incomplete line in buffer
+
+          for (const line of lines) {
+            if (!line.trim()) continue;
             try {
-              await fetch("/api/lead", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  email: emailMatch[0],
-                  source: "chat-fallback",
-                  intent: userText.slice(0, 500),
-                }),
+              const event = JSON.parse(line);
+              switch (event.type) {
+                case "text":
+                  acc += event.content;
+                  setMessages((prev) => {
+                    const copy = [...prev];
+                    copy[copy.length - 1] = { role: "model", content: acc };
+                    return copy;
+                  });
+                  break;
+                case "tool_start":
+                  setToolActive(event.tool);
+                  break;
+                case "tool_end":
+                  setToolActive(null);
+                  break;
+                case "error":
+                  throw new Error(event.message);
+                case "done":
+                  break;
+              }
+            } catch (parseErr) {
+              // If not valid JSON, treat as raw text (backwards compat)
+              acc += line;
+              setMessages((prev) => {
+                const copy = [...prev];
+                copy[copy.length - 1] = { role: "model", content: acc };
+                return copy;
               });
-            } catch (leadErr) {
-              console.error("fallback lead submit failed", leadErr);
             }
           }
         }
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Something went wrong.";
+        const message = err instanceof Error ? err.message : "Something went wrong.";
         setError(message);
         setMessages((prev) => prev.slice(0, -1));
       } finally {
         setStreaming(false);
+        setToolActive(null);
       }
     },
     [messages]
@@ -139,14 +122,26 @@ export function ChatPanel() {
       <div className="mb-6 flex items-center gap-3">
         <PulseDot color="accent" />
         <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-bone/60">
-          Dan&rsquo;s AI twin · Gemini · grounded on the real résumé
+          Dan&rsquo;s AI agent · Gemini · grounded on the real résumé
         </p>
       </div>
 
       <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto pr-2 no-scrollbar">
         {messages.map((m, i) => (
-          <MessageBubble key={i} role={m.role} content={m.content || (streaming && i === messages.length - 1 ? "…" : "")} />
+          <MessageBubble
+            key={i}
+            role={m.role}
+            content={m.content || (streaming && i === messages.length - 1 ? "…" : "")}
+          />
         ))}
+        {toolActive && (
+          <div className="flex items-center gap-2 rounded-2xl border border-accent/20 bg-accent/5 px-4 py-3">
+            <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-accent" />
+            <span className="font-mono text-xs uppercase tracking-wider text-accent/80">
+              {TOOL_LABELS[toolActive] ?? `Running ${toolActive}...`}
+            </span>
+          </div>
+        )}
         {error && (
           <p className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
             {error}
