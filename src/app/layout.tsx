@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
@@ -151,6 +152,11 @@ export default function RootLayout({
       className={`${fraunces.variable} ${geist.variable} ${jetbrains.variable}`}
     >
       <body className="bg-ink text-bone">
+        <Script
+          id="cookieyes"
+          src="https://cdn-cookieyes.com/client_data/35729f8abf8513f5456e6a5d/script.js"
+          strategy="beforeInteractive"
+        />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:text-ink"
