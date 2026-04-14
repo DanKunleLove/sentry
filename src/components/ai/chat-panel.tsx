@@ -98,6 +98,29 @@ export function ChatPanel() {
           } catch (leadErr) {
             console.error("lead submit failed", leadErr);
           }
+        } else {
+          // Fallback: scan user messages for email if AI didn't emit lead block
+          const emailRe = /[\w.+-]+@[\w.-]+\.\w{2,}/;
+          const userText = nextHistory
+            .filter((m) => m.role === "user")
+            .map((m) => m.content)
+            .join(" ");
+          const emailMatch = userText.match(emailRe);
+          if (emailMatch) {
+            try {
+              await fetch("/api/lead", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email: emailMatch[0],
+                  source: "chat-fallback",
+                  intent: userText.slice(0, 500),
+                }),
+              });
+            } catch (leadErr) {
+              console.error("fallback lead submit failed", leadErr);
+            }
+          }
         }
       } catch (err) {
         const message =
