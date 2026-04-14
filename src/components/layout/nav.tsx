@@ -143,7 +143,7 @@ export function Nav() {
                     onClick={() => setMobileOpen(false)}
                     className="flex-1 rounded-full border border-bone/16 py-3 text-center font-mono text-xs uppercase tracking-wider text-bone transition-colors hover:border-accent hover:text-accent"
                   >
-                    AI Agent
+                    AI Twin
                   </Link>
                   <Link
                     href="/resume"

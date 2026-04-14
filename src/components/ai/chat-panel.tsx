@@ -18,7 +18,7 @@ const SEED: Msg[] = [
   {
     role: "model",
     content:
-      "Hey — I'm Dan's AI agent — I can look up his projects, check his availability, and save your details if you want to work together. Ask me about Phantm, Mocha Property, my stack, rates, or timelines. What are you building?",
+      "Hey — Hey — I'm Dan's AI twin, grounded on his real projects and résumé. Ask me about Phantm, Mocha Property, my stack, rates, or timelines. What are you building?",
   },
 ];
 

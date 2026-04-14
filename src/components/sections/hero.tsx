@@ -46,7 +46,7 @@ export function Hero() {
               </Magnetic>
               <Magnetic>
                 <ButtonLink href="/chat" variant="glass" size="lg">
-                  Ask my AI agent
+                  Ask my AI twin
                 </ButtonLink>
               </Magnetic>
             </Reveal>

@@ -18,7 +18,7 @@ export default function NotFound() {
           </h1>
           <p className="mx-auto mb-10 max-w-xl text-lg text-bone/70">
             But the work is real. Head back to the start and see what has
-            shipped — or talk to my AI agent.
+            shipped — or talk to my AI twin.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -31,7 +31,7 @@ export default function NotFound() {
               href="/chat"
               className="glass-strong inline-flex h-12 items-center rounded-full px-6 font-mono text-xs uppercase tracking-wider text-bone"
             >
-              Ask my AI agent
+              Ask my AI twin
             </Link>
           </div>
         </Container>

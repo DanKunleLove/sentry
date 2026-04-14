@@ -24,9 +24,9 @@ export const experience: Experience[] = [
     end: "Present",
     kind: "engineering",
     highlights: [
-      "Sole engineer owning the complete AI product lifecycle — LLM integration, agent architecture, and automation design for international clients.",
+      "Sole engineer owning the complete AI product lifecycle — LLM integration, chatbot architecture, and automation design for international clients.",
       "Built and documented 47 API endpoints for Phantm — a real-time AI avatar platform — using MuseTalk 1.5, CosyVoice 2, FastAPI, and RunPod.",
-      "Delivered CRM-integrated AI agents, voice agents, and intelligent workflow systems designed for reliability and scale.",
+      "Delivered CRM-integrated chatbots, voice agents, and intelligent workflow systems designed for reliability and scale.",
     ],
     stack: ["FastAPI", "RunPod", "MuseTalk", "CosyVoice 2", "Cloudflare R2", "Next.js 14"],
   },

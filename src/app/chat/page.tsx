@@ -8,9 +8,9 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { ChatPanel } from "@/components/ai/chat-panel";
 
 export const metadata: Metadata = {
-  title: "Ask my AI agent",
+  title: "Ask my AI twin",
   description:
-    "Talk to Dan's AI agent — grounded on his real projects, services, and availability. Built on Gemini with function calling.",
+    "Chat with Dan's AI twin — grounded on his real projects, services, and availability. Built on Gemini.",
 };
 
 const embedCode = `<script src="https://adelusidankunle.vercel.app/widget/sentry-chat.min.js"
