@@ -20,22 +20,32 @@ export function EngagementTypes() {
           </p>
         </Reveal>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-          {engagementTypes.map((e, i) => (
-            <Reveal key={e.id} delay={i * 0.06}>
-              <GlassCard className="flex h-full flex-col gap-3 p-6">
-                <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-accent">
-                  0{i + 1}
-                </p>
-                <h3 className="font-serif text-2xl leading-tight">
-                  {e.label}
-                </h3>
-                <p className="text-sm leading-relaxed text-bone/70">
-                  {e.blurb}
-                </p>
-              </GlassCard>
-            </Reveal>
-          ))}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+          {engagementTypes.map((e, i) => {
+            // 3 cards top row, 2 centered below
+            const colClass =
+              i < 3
+                ? "lg:col-span-2"
+                : i === 3
+                  ? "lg:col-start-2 lg:col-span-2"
+                  : "lg:col-span-2";
+
+            return (
+              <Reveal key={e.id} delay={i * 0.06} className={colClass}>
+                <GlassCard className="flex h-full flex-col gap-3 p-6">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-accent">
+                    0{i + 1}
+                  </p>
+                  <h3 className="font-serif text-2xl leading-tight">
+                    {e.label}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-bone/70">
+                    {e.blurb}
+                  </p>
+                </GlassCard>
+              </Reveal>
+            );
+          })}
         </div>
       </Container>
     </section>

@@ -34,10 +34,11 @@ export function ChatPanel() {
   const [messages, setMessages] = useState<Msg[]>(SEED);
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages, streaming]);
 
   const send = useCallback(
@@ -119,7 +120,7 @@ export function ChatPanel() {
         </p>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto pr-2 no-scrollbar">
+      <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto pr-2 no-scrollbar">
         {messages.map((m, i) => (
           <MessageBubble key={i} role={m.role} content={m.content || (streaming && i === messages.length - 1 ? "…" : "")} />
         ))}
@@ -128,7 +129,6 @@ export function ChatPanel() {
             {error}
           </p>
         )}
-        <div ref={bottomRef} />
       </div>
 
       <div className="mt-6">
