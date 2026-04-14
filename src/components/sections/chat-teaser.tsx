@@ -11,7 +11,7 @@ export function ChatTeaser() {
       <GradientMesh intensity={0.7} />
       <Container className="relative z-10">
         <Reveal>
-          <GlassCard variant="strong" className="p-12 md:p-20">
+          <GlassCard variant="strong" className="p-8 md:p-20">
             <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
                 <p className="mb-4 inline-flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/60">

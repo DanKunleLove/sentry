@@ -17,11 +17,6 @@ export function Hero() {
 
       <Container className="relative z-10">
         <div className="grid items-end gap-12 md:grid-cols-[minmax(0,1fr)_auto] md:gap-24">
-          {/* Mobile portrait — shown above text on small screens */}
-          <Reveal className="flex justify-center md:hidden">
-            <PortraitCard mobile />
-          </Reveal>
-
           <div>
             <p className="mb-8 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/60">
               <span className="inline-block h-px w-10 bg-accent" />
@@ -63,7 +58,7 @@ export function Hero() {
           </Reveal>
         </div>
 
-        <div className="mt-24 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.25em] text-bone/50">
+        <div className="mt-12 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.25em] text-bone/50 md:mt-24">
           <span className="inline-block h-px w-8 bg-bone/30" />
           {hero.location}
         </div>
@@ -72,18 +67,14 @@ export function Hero() {
   );
 }
 
-function PortraitCard({ mobile }: { mobile?: boolean }) {
-  const cardClass = mobile
-    ? "relative flex flex-col justify-end overflow-hidden rounded-[28px] border border-bone/10 h-[320px] w-[240px]"
-    : "relative flex flex-col justify-end overflow-hidden rounded-[28px] border border-bone/10 h-[460px] w-[300px]";
-
+function PortraitCard() {
   return (
-    <div className={cardClass}>
+    <div className="relative flex h-[460px] w-[300px] flex-col justify-end overflow-hidden rounded-[28px] border border-bone/10">
       <Image
         src="/images/adk-portrait.png"
         alt="Adelusi Dan Kunle — AI Engineer"
         fill
-        sizes={mobile ? "240px" : "300px"}
+        sizes="300px"
         priority
         className="object-cover object-top"
       />

@@ -55,6 +55,9 @@ function extractText(prop: any): string {
   if (prop.type === "rich_text") {
     return prop.rich_text.map((t: any) => t.plain_text).join("");
   }
+  if (prop.type === "status") {
+    return prop.status?.name ?? "";
+  }
   return "";
 }
 

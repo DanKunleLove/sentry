@@ -14,7 +14,7 @@ export function EngagementTypes() {
           <h2 className="display-md mb-4 max-w-2xl">
             Pick the shape that fits your org.
           </h2>
-          <p className="mb-16 max-w-xl text-bone/60">
+          <p className="mb-10 max-w-xl text-bone/60 md:mb-16">
             Freelance sprints, long-term contracts, remote full-time, advisory,
             or AI training — I take work in all these shapes.
           </p>

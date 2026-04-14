@@ -8,7 +8,7 @@ export function FeaturedWorks() {
   return (
     <section id="work" className="section-y">
       <Container>
-        <div className="mb-20 flex items-end justify-between">
+        <div className="mb-12 flex items-end justify-between md:mb-20">
           <div>
             <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/50">
               Selected work

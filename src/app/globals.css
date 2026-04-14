@@ -185,7 +185,7 @@ body {
 
 /* Section vertical rhythm */
 @utility section-y {
-  padding-block: 8rem;
+  padding-block: 5rem;
 }
 @media (min-width: 768px) {
   .section-y {

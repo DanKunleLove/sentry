@@ -42,7 +42,7 @@ export function ServicesAccordion({ hideHeading = false }: { hideHeading?: boole
             <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/50">
               Services
             </p>
-            <h2 className="display-md mb-16 max-w-2xl">
+            <h2 className="display-md mb-10 max-w-2xl md:mb-16">
               Five lanes. One operator.
             </h2>
           </Reveal>
