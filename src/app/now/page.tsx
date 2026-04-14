@@ -6,6 +6,10 @@ import { Container } from "@/components/layout/container";
 import { Reveal } from "@/components/motion/reveal";
 import { GlassCard } from "@/components/ui/glass-card";
 import { PulseDot } from "@/components/ui/pulse-dot";
+import { fetchNowItems, type NowItem } from "@/lib/notion";
+
+/** Revalidate every 6 hours so Notion edits go live automatically. */
+export const revalidate = 21600;
 
 export const metadata: Metadata = {
   title: "Now — What I'm Building",
@@ -13,35 +17,31 @@ export const metadata: Metadata = {
     "Currently building, currently learning, currently shipping. A live snapshot of Dan's work this week.",
 };
 
-const building = [
-  {
-    title: "LiveSelf",
-    blurb:
-      "Persistent digital-self platform. Voice cloning + tone-adaptive responses + human-in-the-loop escalation.",
-    status: "Architecture phase",
-  },
-  {
-    title: "TELOS",
-    blurb:
-      "AI freelance-success platform — career optimisation via AI job matching, analytics, and coaching.",
-    status: "Architecture",
-  },
-  {
-    title: "Sentry (this site)",
-    blurb:
-      "The portfolio itself. Built as an AI product so it closes leads on my behalf.",
-    status: "Live iteration",
-  },
+/* ── Hardcoded fallback if Notion is unavailable ── */
+const fallbackBuilding = [
+  { title: "LiveSelf", description: "Persistent digital-self platform. Voice cloning + tone-adaptive responses + human-in-the-loop escalation.", status: "Architecture phase", type: "building" as const, order: 1 },
+  { title: "TELOS", description: "AI freelance-success platform — career optimisation via AI job matching, analytics, and coaching.", status: "Architecture", type: "building" as const, order: 2 },
+  { title: "Sentry (this site)", description: "The portfolio itself. Built as an AI product so it closes leads on my behalf.", status: "Live iteration", type: "building" as const, order: 3 },
+];
+const fallbackLearning = [
+  { title: "Cache Components in Next.js 16", type: "learning" as const, order: 1 },
+  { title: "Multi-agent orchestration patterns", type: "learning" as const, order: 2 },
+  { title: "Voice-first product UX", type: "learning" as const, order: 3 },
+  { title: "LiveKit + Cartesia for sub-500ms voice loops", type: "learning" as const, order: 4 },
 ];
 
-const learning = [
-  "Cache Components in Next.js 16",
-  "Multi-agent orchestration patterns",
-  "Voice-first product UX",
-  "LiveKit + Cartesia for sub-500ms voice loops",
-];
+export default async function NowPage() {
+  const items = await fetchNowItems();
+  const hasNotion = items.length > 0;
 
-export default function NowPage() {
+  const building: NowItem[] = hasNotion
+    ? items.filter((i) => i.type === "building")
+    : fallbackBuilding;
+
+  const learning: NowItem[] = hasNotion
+    ? items.filter((i) => i.type === "learning")
+    : fallbackLearning;
+
   return (
     <>
       <SmoothScroll />
@@ -51,7 +51,7 @@ export default function NowPage() {
           <Reveal>
             <p className="mb-4 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/50">
               <PulseDot />
-              Now · updated April 2026
+              Now {hasNotion ? "· synced from Notion" : "· updated April 2026"}
             </p>
             <h1 className="display-lg mb-16 max-w-4xl">
               What I&rsquo;m building right now.
@@ -62,15 +62,19 @@ export default function NowPage() {
             {building.map((b, i) => (
               <Reveal key={b.title} delay={i * 0.08}>
                 <GlassCard className="h-full p-8">
-                  <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-accent">
-                    {b.status}
-                  </p>
+                  {b.status && (
+                    <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-accent">
+                      {b.status}
+                    </p>
+                  )}
                   <h3 className="font-serif text-3xl leading-tight">
                     {b.title}
                   </h3>
-                  <p className="mt-4 text-bone/70 leading-relaxed">
-                    {b.blurb}
-                  </p>
+                  {b.description && (
+                    <p className="mt-4 text-bone/70 leading-relaxed">
+                      {b.description}
+                    </p>
+                  )}
                 </GlassCard>
               </Reveal>
             ))}
@@ -89,11 +93,11 @@ export default function NowPage() {
               <ul className="space-y-4">
                 {learning.map((l) => (
                   <li
-                    key={l}
+                    key={l.title}
                     className="flex gap-4 text-lg text-bone/80"
                   >
                     <span className="text-accent">▸</span>
-                    {l}
+                    {l.title}
                   </li>
                 ))}
               </ul>
