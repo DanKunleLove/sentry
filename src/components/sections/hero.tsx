@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { GradientMesh } from "@/components/motion/gradient-mesh";
@@ -15,7 +16,12 @@ export function Hero() {
       <GradientMesh />
 
       <Container className="relative z-10">
-        <div className="grid items-end gap-16 md:grid-cols-[minmax(0,1fr)_auto] md:gap-24">
+        <div className="grid items-end gap-12 md:grid-cols-[minmax(0,1fr)_auto] md:gap-24">
+          {/* Mobile portrait — shown above text on small screens */}
+          <Reveal className="flex justify-center md:hidden">
+            <PortraitCard mobile />
+          </Reveal>
+
           <div>
             <p className="mb-8 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/60">
               <span className="inline-block h-px w-10 bg-accent" />
@@ -51,6 +57,7 @@ export function Hero() {
             </Reveal>
           </div>
 
+          {/* Desktop portrait — right column */}
           <Reveal delay={0.4} className="hidden md:block">
             <PortraitCard />
           </Reveal>
@@ -65,30 +72,31 @@ export function Hero() {
   );
 }
 
-function PortraitCard() {
+function PortraitCard({ mobile }: { mobile?: boolean }) {
+  const cardClass = mobile
+    ? "relative flex flex-col justify-end overflow-hidden rounded-[28px] border border-bone/10 h-[320px] w-[240px]"
+    : "relative flex flex-col justify-end overflow-hidden rounded-[28px] border border-bone/10 h-[460px] w-[300px]";
+
   return (
-    <div className="glass relative flex h-[420px] w-[280px] flex-col justify-end overflow-hidden p-5">
-      {/* Graceful gradient fallback — slots the real image in once /images/adk-portrait.webp exists */}
+    <div className={cardClass}>
+      <Image
+        src="/images/adk-portrait.png"
+        alt="Adelusi Dan Kunle — AI Engineer"
+        fill
+        sizes={mobile ? "240px" : "300px"}
+        priority
+        className="object-cover object-top"
+      />
+      {/* Subtle bottom scrim for text readability only */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-20"
-        style={{
-          background:
-            "radial-gradient(120% 80% at 50% 30%, rgba(255,91,31,0.35) 0%, rgba(255,91,31,0.08) 35%, rgba(10,10,12,1) 75%)",
-        }}
+        className="absolute inset-x-0 bottom-0 h-[100px] bg-gradient-to-t from-ink/70 to-transparent"
       />
-      <div
-        className="absolute inset-0 -z-10 bg-cover bg-top"
-        style={{
-          backgroundImage:
-            "linear-gradient(180deg, rgba(10,10,12,0) 40%, rgba(10,10,12,0.6) 100%), url('/images/adk-portrait.webp')",
-        }}
-      />
-      <div className="flex flex-col gap-1">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone/70">
+      <div className="relative z-10 p-5">
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone/80">
           Adelusi Dan Kunle
         </p>
-        <p className="font-serif text-xl leading-tight">
+        <p className="font-serif text-xl leading-tight text-bone">
           Available globally.
         </p>
         <Link

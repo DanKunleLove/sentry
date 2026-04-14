@@ -117,7 +117,7 @@ export function EvalViz({ className }: { className?: string }) {
       style={{
         position: "relative",
         width: "100%",
-        maxWidth: 520,
+        maxWidth: "min(100%, 520px)",
         margin: "0 auto",
         fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
       }}

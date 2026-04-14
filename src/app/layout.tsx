@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -54,7 +55,18 @@ export const metadata: Metadata = {
     "Creative AI",
     "AI video",
     "full-stack AI developer",
+    "hire AI engineer",
+    "AI automation freelancer",
+    "n8n consultant",
+    "AI developer for hire",
+    "AI agent developer",
+    "remote AI engineer",
+    "freelance LLM engineer",
+    "AI consultant Nigeria",
   ],
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
   authors: [{ name: "Adelusi Dan Kunle", url: SITE_URL }],
   creator: "Adelusi Dan Kunle",
   openGraph: {
@@ -95,7 +107,7 @@ const personJsonLd = {
   alternateName: "Dan Kunle",
   jobTitle: "AI Engineer · Automation Architect · LLM Specialist",
   url: SITE_URL,
-  image: `${SITE_URL}/images/adk-portrait.webp`,
+  image: `${SITE_URL}/images/adk-portrait.png`,
   address: { "@type": "PostalAddress", addressLocality: "Lagos", addressCountry: "NG" },
   worksFor: {
     "@type": "Organization",
@@ -150,6 +162,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
+        <GoogleAnalytics />
         <Analytics />
         <SpeedInsights />
       </body>

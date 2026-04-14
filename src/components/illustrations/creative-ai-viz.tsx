@@ -88,7 +88,7 @@ export function CreativeAIViz({ className }: { className?: string }) {
       style={{
         position: "relative",
         width: "100%",
-        maxWidth: 600,
+        maxWidth: "min(100%, 600px)",
         margin: "0 auto",
         fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
       }}

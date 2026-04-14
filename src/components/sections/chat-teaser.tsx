@@ -31,7 +31,7 @@ export function ChatTeaser() {
               </div>
               <Link
                 href="/chat"
-                className="group inline-flex h-16 items-center justify-center gap-3 rounded-full bg-accent px-10 font-mono text-xs uppercase tracking-wider text-ink transition-all hover:-translate-y-[2px]"
+                className="group inline-flex h-12 items-center justify-center gap-3 rounded-full bg-accent px-8 font-mono text-xs uppercase tracking-wider text-ink transition-all hover:-translate-y-[2px] md:h-16 md:px-10"
               >
                 Start chat
                 <span className="text-lg transition-transform group-hover:translate-x-1">

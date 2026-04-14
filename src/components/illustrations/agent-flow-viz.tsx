@@ -151,7 +151,7 @@ export function AgentFlowViz({ className }: { className?: string }) {
       style={{
         position: "relative",
         width: "100%",
-        maxWidth: 440,
+        maxWidth: "min(100%, 440px)",
         margin: "0 auto",
         fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
       }}
