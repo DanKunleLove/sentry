@@ -10,20 +10,44 @@ Submit to these free showcase/award sites to get visibility, backlinks, and cred
 | **Awwwards** | https://www.awwwards.com/submit | Free nomination | Others can nominate your site for free |
 | **CSS Design Awards** | https://www.cssdesignawards.com/submit | Free tier | Basic listing is free |
 | **Bestfolios** | https://www.bestfolios.com/submit | Yes | Portfolio-specific showcase |
-| **SaaS Landing Page** | https://saaslandingpage.com/submit | Yes | If you position as a SaaS-like tool |
+| **SaaS Landing Page** | https://saaslandingpage.com/submit | Yes | Position the agent as a product |
 | **Dribbble** | https://dribbble.com | Yes | Post screenshots of the site as shots |
-| **Behance** | https://www.behance.net | Yes | Create a case study of the site build |
-| **Product Hunt** | https://www.producthunt.com | Yes | Launch the AI twin chat as a product |
-| **Dev.to** | https://dev.to | Yes | Write "How I built my AI-powered portfolio" |
+| **Behance** | https://www.behance.net | Yes | Create a case study of the site + agent build |
+| **Product Hunt** | https://www.producthunt.com | Yes | Launch the AI agent as a product |
+| **Dev.to** | https://dev.to | Yes | Write "How I built an AI agent inside my portfolio" |
 | **Hashnode** | https://hashnode.com | Yes | Same blog post, cross-post |
 | **IndieHackers** | https://www.indiehackers.com | Yes | Share the build story |
 | **Peerlist** | https://peerlist.io | Yes | Developer profile + project showcase |
 
+### Submission Description
+> AI-powered portfolio with a built-in AI agent — not a chatbot. The agent uses Gemini 2.5 Flash function calling with 5 autonomous tools: it captures leads to a database, sends real-time email notifications, looks up project details, checks service availability, and qualifies visitors — all without human intervention. Editorial-dark glass design, editorial typography, and production-grade architecture. Built with Next.js 16, Tailwind v4, Framer Motion, Supabase, and Nodemailer.
+
 ### Submission Tips
 - Take high-quality screenshots (1440px desktop + 375px mobile)
-- Include a short description: "AI-powered portfolio with a built-in AI twin chat, lead capture, and editorial-dark glass design"
-- Tag: AI, Portfolio, Next.js, Design, Dark Mode, Glass UI
+- Tag: AI Agent, Portfolio, Next.js, Function Calling, Dark Mode, Glass UI
 - Submit to 2-3 per week — don't spam all at once
+- Include a screen recording of the agent calling tools in real-time
+
+---
+
+## Agent Setup (for email notifications)
+
+### Gmail App Password (required for agent email notifications)
+1. Go to your Google Account → Security
+2. Make sure 2-Step Verification is ON
+3. Go to App Passwords → Create one for "Mail"
+4. Copy the 16-character password
+5. Add to Vercel env vars:
+   - `SMTP_USER=adelusidankunle@gmail.com`
+   - `SMTP_PASS=<the-16-character-app-password>`
+6. Redeploy
+
+### Test the Agent
+1. Go to `/chat` on the live site
+2. Say: "my email is test@example.com, I need an automation pipeline"
+3. Watch the agent tool indicator: "Saving your contact info..."
+4. Check Supabase `leads` table — new row should appear
+5. Check your Gmail — notification email should arrive
 
 ---
 
@@ -62,163 +86,198 @@ Submit to these free showcase/award sites to get visibility, backlinks, and cred
 
 ## Social Media Launch Posts
 
-### LinkedIn (~300 words, professional)
+### LinkedIn (~350 words, professional)
 
 ```
-I built an AI-powered portfolio that talks back.
+My portfolio doesn't just talk. It acts.
 
-After months of shipping AI products for clients across the UK, US, Canada, and Dubai — I realized my own portfolio was the one thing I hadn't given the AI treatment.
+I built an AI agent inside my portfolio website. Not a chatbot — an agent with real tools and autonomous decision-making.
 
-So I built Sentry.
+Here's what it does:
 
-It's not just a portfolio. It's a production AI product:
+When you tell it your email, it doesn't just "note it down." It calls a function, writes your details to a database, and sends me an email notification — in real time. You see it happening: a small indicator shows "Saving your contact info..." while the tool executes.
 
-→ An AI twin trained on my work, skills, and experience — visitors can ask it anything about working with me
-→ Automated lead capture — when someone's interested, the AI collects their details naturally through conversation
-→ 10+ detailed case studies with real metrics, not vague descriptions
-→ Built with Next.js 16, Tailwind v4, Framer Motion, Gemini 2.5 Flash, and Supabase
+When you ask about a project I've built, it doesn't guess from memory. It calls a lookup tool, searches my actual project data, and returns verified details — stack, metrics, approach, and a direct link to the case study.
 
-The AI twin isn't a gimmick. It's the same technology I build for clients — conversational AI with function-calling, grounding documents, and streaming responses. Except this time, the client is me.
+When you ask about my availability, it calls a tool that returns my current engagement types, timezone, and contact info.
 
-What I ship:
-• Production AI products & agent systems
-• LLM integrations (Claude, GPT, Gemini, DeepSeek)
+The architecture:
+
+→ Gemini 2.5 Flash with function calling — the AI autonomously decides WHEN to use each tool
+→ 5 server-side tools: lead capture, email notification, project lookup, service query, availability check
+→ Event stream protocol — the UI shows real-time tool execution indicators
+→ Supabase for lead persistence, Nodemailer for Gmail notifications
+→ Next.js 16, Tailwind v4, Framer Motion, editorial-dark glass design
+
+This isn't a demo. This is production infrastructure — the same architecture I ship to paying clients across the UK, US, Canada, and Dubai.
+
+The AI agent on my portfolio IS the portfolio.
+
+What I build for clients:
+• AI agent systems with tool use and function calling
+• LLM integrations (Claude, Gemini, GPT, DeepSeek)
 • n8n/Make automation pipelines
 • Voice agents (LiveKit + Cerebras)
-• Creative AI content at scale
+• Full-stack AI products end-to-end
 
-Available for: Freelance · Contract · Remote Full-Time · Advisory
+Available: Freelance · Contract · Remote Full-Time · Advisory
 
-Check it out → [SITE URL]
+Talk to the agent → [SITE URL]/chat
+See the full site → [SITE URL]
 
-Ask my AI twin anything → [SITE URL]/chat
-
-#AI #AIEngineer #LLM #Portfolio #Automation #n8n #NextJS #BuildInPublic #OpenToWork
+#AI #AIAgent #FunctionCalling #LLM #Portfolio #Automation #n8n #NextJS #BuildInPublic #OpenToWork #AIEngineer
 ```
 
-### X Thread (5-7 tweets)
+### X Thread (7 tweets)
 
 ```
-🧵 I built a portfolio that has an AI twin of me inside it.
+I built a portfolio website with an AI agent inside it.
 
-It answers questions about my work, captures leads, and runs on the same stack I ship to paying clients.
+Not a chatbot. An agent with 5 tools that takes real actions autonomously.
 
-Here's how ↓
-```
-
-```
-1/ The problem: Traditional portfolios are static. Visitors land, skim, leave.
-
-I wanted mine to convert. So I built an AI twin trained on my actual work, skills, and project history.
-
-It talks. It qualifies leads. It books calls.
+Here's the architecture ↓
 ```
 
 ```
-2/ The stack:
+1/ The problem with AI chatbots on portfolios:
 
-→ Next.js 16 (App Router, Turbopack)
-→ Tailwind v4
-→ Framer Motion + GSAP
-→ Gemini 2.5 Flash (AI twin)
-→ Supabase (conversations + leads)
-→ Vercel (deploy + analytics)
+They talk. That's it.
 
-All server-side. No API keys in the browser.
+I wanted mine to ACT. Save leads. Send me emails. Look up project details. Check my availability. All without me lifting a finger.
+
+So I built an agent with Gemini function calling.
 ```
 
 ```
-3/ The AI twin isn't a chatbot template.
+2/ How it works:
 
-It uses a grounding document (persona.ts) so it only says things I've actually done. No hallucinations. No fabricated metrics.
+Gemini 2.5 Flash receives the visitor's message + 5 tool declarations.
 
-It captures name, email, project type, and timeline — naturally through conversation.
+The AI DECIDES when to call a tool. No hardcoded rules. No regex hacks.
+
+When it calls one, the server executes it and feeds the result back. Up to 5 rounds per turn.
 ```
 
 ```
-4/ What I ship for clients:
+3/ The 5 tools:
 
-• AI agent systems
-• LLM integrations (Claude, GPT, Gemini)
-• n8n/Make automation pipelines
-• Voice agents
-• Creative AI production
+→ capture_lead — saves to Supabase + emails me
+→ notify_dan — sends me a message from the visitor
+→ lookup_project — searches my real case studies
+→ list_services — returns what I offer
+→ check_availability — engagement types, timezone, status
 
-20+ products shipped across 4+ countries.
+All server-side. Zero client-side hacks.
 ```
 
 ```
-5/ The design is editorial-dark × liquid-glass.
+4/ The UX:
 
-Think: Linear meets iOS 26.
+When a tool fires, the visitor sees a real-time indicator:
 
-Fraunces serif for display. Geist sans for UI. JetBrains Mono for data.
+"Saving your contact info..."
+"Looking up project details..."
+"Notifying Dan..."
 
-Glass surfaces with real backdrop-filter blur and specular highlights.
+It's not a loading spinner. It's transparency — the visitor sees the agent working.
+
+Event stream protocol: line-delimited JSON events.
 ```
 
 ```
-6/ It's live. Go talk to my AI twin:
+5/ The stack:
 
-[SITE URL]/chat
+→ Gemini 2.5 Flash function calling (free)
+→ Nodemailer + Gmail SMTP (free)
+→ Supabase (free tier)
+→ Next.js 16 App Router
+→ Tailwind v4 + Framer Motion
+→ Editorial-dark glass design
 
-Or explore the full site:
+Total recurring cost: $0.
 
-[SITE URL]
+The only paid thing is the Vercel domain (optional).
+```
 
-Available for freelance, contract, remote FT, and advisory.
+```
+6/ This is exactly what I build for clients.
 
-DMs open. 🤝
+AI agent systems. LLM integration. Automation pipelines. Function calling. Production infrastructure.
+
+20+ products shipped. 4+ countries. The portfolio IS the demo.
+
+Talk to the agent: [SITE URL]/chat
+
+DMs open for freelance, contract, and remote FT. 🤝
 ```
 
 ### Instagram Caption
 
 ```
-Built an AI-powered portfolio that talks back. 🔥
+Built an AI agent inside my portfolio. Not a chatbot — an agent.
 
-Not just a website — it's a production AI product with:
-→ An AI twin trained on my real work
-→ Automated lead capture through conversation
-→ 10+ case studies with real metrics
-→ Editorial-dark glass design
+It has 5 tools it can call autonomously:
+→ Saves your contact info to a database
+→ Sends me an email notification in real time
+→ Looks up my actual project details
+→ Returns my services and availability
+→ Qualifies you as a lead — all through natural conversation
 
-The AI twin uses the same tech I ship to clients — Gemini 2.5 Flash, function-calling, grounding, streaming.
+You see it happen. The UI shows "Saving your contact info..." while the tool executes.
+
+Built with Gemini function calling, Supabase, Nodemailer, Next.js 16.
+
+Total cost: $0.
+
+This is what I build for clients. The portfolio IS the product demo.
 
 Available for freelance · contract · remote · full-time worldwide.
 
-Link in bio → talk to my AI twin 🤖
+Link in bio → talk to the agent
 
-#AI #AIEngineer #Portfolio #WebDesign #NextJS #LLM #Automation #BuildInPublic #TechNigeria #OpenToWork #DarkMode #GlassUI
+#AI #AIAgent #FunctionCalling #Portfolio #WebDesign #NextJS #LLM #Automation #BuildInPublic #TechNigeria #OpenToWork #GlassUI #DarkMode
 ```
 
-### TikTok Script (30s)
+### TikTok Script (30-45s)
 
 ```
 [HOOK - 0-3s]
-"I built a portfolio website that has an AI clone of me inside it."
+"I built a portfolio website with an AI agent that takes REAL actions."
 
-[SHOW - 3-15s]
-*Screen recording scrolling through the site*
-"It answers questions about my work, my skills, my availability — trained on everything I've actually done."
+[SHOW AGENT - 3-10s]
+*Screen recording of chat — type "my email is test@example.com"*
+"Watch what happens when I give it my email."
 
-[PROOF - 15-22s]
-*Show the chat in action*
-"When someone's interested in hiring me, it captures their details automatically. No forms. Just conversation."
+[TOOL INDICATOR - 10-18s]
+*Show the "Saving your contact info..." indicator appearing*
+"See that? That's not a loading screen. The AI just decided to call a function — it saved my details to a database and sent me an email. Autonomously."
 
-[CTA - 22-30s]
-"I'm an AI Engineer available worldwide. Link in bio to try it."
+[ARCHITECTURE - 18-28s]
+*Quick flash of code or the tool list*
+"5 tools. Function calling. Gemini 2.5 Flash. The AI decides when to act. No hardcoded rules."
+
+[PROOF - 28-35s]
+*Show Supabase table with the lead + Gmail notification*
+"Database updated. Email received. Zero human intervention."
+
+[CTA - 35-45s]
+"I'm an AI Engineer. This is what I build for clients. 20+ products shipped across 4 countries. Link in bio to try it yourself."
 ```
 
 ### WhatsApp Status
 
 ```
-Just launched my AI-powered portfolio 🚀
+Just shipped something wild 🔥
 
-It has an AI twin of me that you can actually talk to — ask it anything about my work, skills, or how to hire me.
+My portfolio website has an AI agent inside it — not a chatbot, an actual agent with tools.
 
-Built with Next.js, Gemini AI, and the same tech I ship to clients across UK, US, Canada & Dubai.
+Give it your email → it saves to a database + sends me an email notification. Autonomously.
 
-Check it out: [SITE URL]
+Ask about my projects → it looks up real case study data with metrics.
+
+5 tools. Gemini function calling. $0 cost.
+
+Try it: [SITE URL]/chat
 
 Available for freelance & remote work worldwide 🌍
 ```
@@ -227,6 +286,8 @@ Available for freelance & remote work worldwide 🌍
 
 ## Post-Launch Checklist
 
+- [ ] Set up Gmail App Password + add SMTP_USER/SMTP_PASS to Vercel
+- [ ] Test agent: give email → verify Supabase lead + email notification
 - [ ] Submit sitemap to Google Search Console
 - [ ] Submit sitemap to Bing Webmaster Tools
 - [ ] Test OG image on opengraph.xyz
@@ -236,7 +297,7 @@ Available for freelance & remote work worldwide 🌍
 - [ ] Post TikTok
 - [ ] Update WhatsApp status
 - [ ] Submit to Godly
+- [ ] Submit to Product Hunt (AI agent as the product)
 - [ ] Submit to Bestfolios
 - [ ] Submit to Peerlist
-- [ ] Write Dev.to / Hashnode article
-- [ ] Submit to Product Hunt (AI twin chat as the product)
+- [ ] Write Dev.to / Hashnode article: "How I built an AI agent inside my portfolio"
