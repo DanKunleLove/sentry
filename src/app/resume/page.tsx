@@ -29,7 +29,13 @@ export default function ResumePage() {
                   AI & Automation Architect · LLM Specialist · AI Engineer
                 </p>
                 <p className="mt-2 text-sm text-bone/70 print:text-black/80">
-                  {site.location} · {site.email} · {site.socials.github} · {site.socials.linkedin}
+                  {site.location} · {site.email} ·{" "}
+                  <a href={site.socials.github} target="_blank" rel="noopener noreferrer" className="underline hover:text-bone transition-colors print:no-underline">
+                    GitHub
+                  </a>{" "}·{" "}
+                  <a href={site.socials.linkedin} target="_blank" rel="noopener noreferrer" className="underline hover:text-bone transition-colors print:no-underline">
+                    LinkedIn
+                  </a>
                 </p>
               </div>
               <PrintButton />

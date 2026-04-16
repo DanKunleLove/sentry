@@ -12,6 +12,23 @@ export const dynamic = "force-dynamic";
 
 const MAX_TOOL_ROUNDS = 5;
 
+/** Retry a function once after a delay if it throws a quota/rate error. */
+async function withRetry<T>(fn: () => Promise<T>, retries = 1, delayMs = 2500): Promise<T> {
+  try {
+    return await fn();
+  } catch (err: any) {
+    const status = err?.status ?? err?.httpStatusCode ?? 0;
+    const msg = err?.message ?? "";
+    const isQuota = status === 429 || status === 503 || msg.includes("quota") || msg.includes("RESOURCE_EXHAUSTED");
+    if (isQuota && retries > 0) {
+      console.warn(`[agent] Gemini quota hit, retrying in ${delayMs}ms...`);
+      await new Promise((r) => setTimeout(r, delayMs));
+      return withRetry(fn, retries - 1, delayMs * 2);
+    }
+    throw err;
+  }
+}
+
 const MessageSchema = z.object({
   role: z.enum(["user", "model"]),
   content: z.string().min(1).max(2000),
@@ -86,7 +103,7 @@ async function upsertConversation(
 export async function POST(req: NextRequest) {
   // Rate limit
   const ip = ipFromRequest(req);
-  const rl = checkRateLimit(`chat:${ip}`, { limit: 20, windowMs: 60 * 60 * 1000 });
+  const rl = checkRateLimit(`chat:${ip}`, { limit: 12, windowMs: 60 * 60 * 1000 });
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Too many requests. Try again later.", resetAt: rl.resetAt },
@@ -180,17 +197,19 @@ export async function POST(req: NextRequest) {
         while (round < MAX_TOOL_ROUNDS) {
           round++;
 
-          const response = await gemini.models.generateContent({
-            model: GEMINI_MODEL,
-            contents: currentContents,
-            config: {
-              systemInstruction: systemPrompt,
-              temperature: 0.7,
-              maxOutputTokens: 2048,
-              thinkingConfig: { thinkingBudget: 4096 },
-              tools: [{ functionDeclarations: agentTools }],
-            },
-          });
+          const response = await withRetry(() =>
+            gemini.models.generateContent({
+              model: GEMINI_MODEL,
+              contents: currentContents,
+              config: {
+                systemInstruction: systemPrompt,
+                temperature: 0.7,
+                maxOutputTokens: 2048,
+                thinkingConfig: { thinkingBudget: 4096 },
+                tools: [{ functionDeclarations: agentTools }],
+              },
+            })
+          );
 
           const candidate = response.candidates?.[0];
           if (!candidate?.content?.parts) break;
@@ -242,17 +261,19 @@ export async function POST(req: NextRequest) {
 
           // No function calls — stream the final text response
           // For the final response, use streaming for better UX
-          const stream = await gemini.models.generateContentStream({
-            model: GEMINI_MODEL,
-            contents: currentContents,
-            config: {
-              systemInstruction: systemPrompt,
-              temperature: 0.7,
-              maxOutputTokens: 2048,
-              thinkingConfig: { thinkingBudget: 4096 },
-              // No tools on final streaming pass to avoid re-triggering
-            },
-          });
+          const stream = await withRetry(() =>
+            gemini.models.generateContentStream({
+              model: GEMINI_MODEL,
+              contents: currentContents,
+              config: {
+                systemInstruction: systemPrompt,
+                temperature: 0.7,
+                maxOutputTokens: 2048,
+                thinkingConfig: { thinkingBudget: 4096 },
+                // No tools on final streaming pass to avoid re-triggering
+              },
+            })
+          );
 
           for await (const chunk of stream) {
             const text = chunk.text;
@@ -284,11 +305,16 @@ export async function POST(req: NextRequest) {
         }
 
         controller.close();
-      } catch (err) {
+      } catch (err: any) {
         console.error("[agent] error:", err);
-        const msg = err instanceof Error ? err.message : "Agent error";
+        const status = err?.status ?? err?.httpStatusCode ?? 0;
+        const errMsg = err?.message ?? "";
+        const isQuota = status === 429 || status === 503 || errMsg.includes("quota") || errMsg.includes("RESOURCE_EXHAUSTED");
+        const userMessage = isQuota
+          ? "I'm getting a lot of visitors right now — my AI is at capacity. Try again in a minute or reach me directly at adelusidankunle@gmail.com."
+          : err instanceof Error ? err.message : "Something went wrong. Please try again.";
         controller.enqueue(
-          encoder.encode(JSON.stringify({ type: "error", message: msg }) + "\n")
+          encoder.encode(JSON.stringify({ type: "error", message: userMessage }) + "\n")
         );
         controller.close();
       }
