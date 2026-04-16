@@ -147,6 +147,7 @@ create table public.leads (
   conversation_id uuid references public.conversations(id) on delete set null,
   name text,
   email text not null,
+  phone text,
   company text,
   project_type text,
   budget_band text,

@@ -6,7 +6,7 @@ export const site = {
   description:
     "AI & Automation Architect shipping production AI products, agent systems, and automation pipelines for international clients.",
   email: "adelusidankunle@gmail.com",
-  location: "Lagos, Nigeria",
+  location: "Remote worldwide",
   socials: {
     github: "https://github.com/DanKunleLove",
     linkedin: "https://www.linkedin.com/in/dan-adelusi-057733322",

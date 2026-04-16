@@ -286,16 +286,31 @@ Available for freelance & remote work worldwide 🌍
 
 ## Post-Launch Checklist
 
-- [ ] Set up Gmail App Password + add SMTP_USER/SMTP_PASS to Vercel
-- [ ] Test agent: give email → verify Supabase lead + email notification
-- [ ] Submit sitemap to Google Search Console
-- [ ] Submit sitemap to Bing Webmaster Tools
-- [ ] Test OG image on opengraph.xyz
+### Infrastructure (completed 2026-04-14)
+- [x] Set up Gmail App Password + add SMTP_USER/SMTP_PASS to Vercel
+- [x] Test agent: email notification works (verified with Toke's lead)
+- [ ] Test agent: verify Supabase lead persistence (after phone column fix + redeploy)
+- [x] Set up Google Analytics 4 (G-LTYTGFFSD4 added to Vercel)
+- [x] Set up CookieYes consent banner (initiated 2026-04-14)
+- [x] Submit sitemap to Google Search Console (submitted 2026-04-14, status: "Couldn't fetch" — normal, retry in 3-5 days)
+- [x] Submit to Bing Webmaster Tools (processing, up to 48h)
+- [x] Test OG image on opengraph.xyz — PASS
+- [x] Test Twitter card on cards-dev.x.com — PASS (summary_large_image)
+- [x] Test LinkedIn post inspector — PASS
+
+### SEO follow-ups
+- [ ] Request indexing in GSC for: homepage, /about, /work, /chat, /services
+- [ ] Re-check sitemap status in GSC (3-5 days after 2026-04-14)
+- [ ] Submit sitemap in Bing Webmaster Tools → Sitemaps section
+
+### Social launch
 - [ ] Post on LinkedIn
 - [ ] Post X thread
 - [ ] Post on Instagram
 - [ ] Post TikTok
 - [ ] Update WhatsApp status
+
+### Directory submissions
 - [ ] Submit to Godly
 - [ ] Submit to Product Hunt (AI agent as the product)
 - [ ] Submit to Bestfolios

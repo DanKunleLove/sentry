@@ -6,12 +6,25 @@ import { PulseDot } from "@/components/ui/pulse-dot";
 
 type Msg = { role: "user" | "model"; content: string };
 
+/** Get or create a persistent session ID for this browser. */
+function getSessionId(): string {
+  const KEY = "sentry_session_id";
+  let id = localStorage.getItem(KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(KEY, id);
+  }
+  return id;
+}
+
 const TOOL_LABELS: Record<string, string> = {
   capture_lead: "Saving your contact info...",
   notify_dan: "Notifying Dan...",
   lookup_project: "Looking up project details...",
   list_services: "Checking services...",
   check_availability: "Checking availability...",
+  check_calendar: "Checking Dan's calendar...",
+  book_meeting: "Scheduling a meeting...",
 };
 
 const SEED: Msg[] = [
@@ -28,6 +41,11 @@ export function ChatPanel() {
   const [toolActive, setToolActive] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string>("");
+
+  useEffect(() => {
+    sessionIdRef.current = getSessionId();
+  }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -47,7 +65,7 @@ export function ChatPanel() {
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: nextHistory }),
+          body: JSON.stringify({ messages: nextHistory, sessionId: sessionIdRef.current }),
         });
 
         if (!res.ok) {

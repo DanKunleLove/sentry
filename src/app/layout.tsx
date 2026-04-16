@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     "AI Engineer",
     "LLM Specialist",
     "Automation Architect",
-    "AI Engineer Nigeria",
+    "AI Engineer remote",
     "n8n automation",
     "LLM integration contractor",
     "Gemini",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     "AI agent developer",
     "remote AI engineer",
     "freelance LLM engineer",
-    "AI consultant Nigeria",
+    "AI consultant remote",
   ],
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
@@ -109,7 +109,6 @@ const personJsonLd = {
   jobTitle: "AI Engineer · Automation Architect · LLM Specialist",
   url: SITE_URL,
   image: `${SITE_URL}/images/adk-portrait.png`,
-  address: { "@type": "PostalAddress", addressLocality: "Lagos", addressCountry: "NG" },
   worksFor: {
     "@type": "Organization",
     name: "Mabi Labs",

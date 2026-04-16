@@ -54,12 +54,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-3 border-t border-bone/8 pt-8 md:flex-row md:items-center">
+        <div className="mt-16 border-t border-bone/8 pt-8">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone/40">
-            © {new Date().getFullYear()} Adelusi Dan Kunle · Rendered in Lagos
-          </p>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-bone/40">
-            Built with Next.js · Gemini · Supabase
+            © {new Date().getFullYear()} Adelusi Dan Kunle
           </p>
         </div>
       </Container>

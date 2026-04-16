@@ -3,6 +3,7 @@ import { Type, type FunctionDeclaration } from "@google/genai";
 import { works } from "@/content/works";
 import { services, engagementTypes } from "@/content/services";
 import { notifyLeadEmail, notifyMessageEmail } from "./email";
+import { isCalendarConfigured, getFreeBusy, createMeeting } from "./calendar";
 
 // ── Tool declarations (sent to Gemini) ──
 
@@ -89,6 +90,51 @@ export const agentTools: FunctionDeclaration[] = [
       },
     },
   },
+  {
+    name: "check_calendar",
+    description:
+      "Check Dan's real calendar for free/busy slots over the next few days. Use when visitors ask to schedule a call, check Dan's availability for a meeting, or want to know when Dan is free.",
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        days: {
+          type: Type.NUMBER,
+          description: "Number of days ahead to check (default 7, max 14)",
+        },
+      },
+    },
+  },
+  {
+    name: "book_meeting",
+    description:
+      "Book a meeting on Dan's calendar and send a Google Meet invite to the visitor. Only call this after the visitor has confirmed a time and provided their email.",
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        attendeeEmail: {
+          type: Type.STRING,
+          description: "Visitor's email address for the calendar invite",
+        },
+        startTime: {
+          type: Type.STRING,
+          description: "Meeting start time in ISO 8601 format (e.g., 2026-04-20T14:00:00+01:00)",
+        },
+        durationMinutes: {
+          type: Type.NUMBER,
+          description: "Meeting duration in minutes (default 30)",
+        },
+        summary: {
+          type: Type.STRING,
+          description: "Meeting title (e.g., 'Call with Toke — AI automation for e-commerce')",
+        },
+        description: {
+          type: Type.STRING,
+          description: "Optional meeting description with context",
+        },
+      },
+      required: ["attendeeEmail", "startTime", "summary"],
+    },
+  },
 ];
 
 // ── Tool handlers ──
@@ -98,11 +144,12 @@ export type ToolResult = { success: boolean; data: unknown };
 export async function executeToolCall(
   name: string,
   args: Record<string, unknown>,
-  supabaseInsert?: (table: string, data: Record<string, unknown>) => Promise<void>
+  supabaseInsert?: (table: string, data: Record<string, unknown>) => Promise<void>,
+  conversationId?: string | null
 ): Promise<ToolResult> {
   switch (name) {
     case "capture_lead":
-      return handleCaptureLead(args, supabaseInsert);
+      return handleCaptureLead(args, supabaseInsert, conversationId);
     case "notify_dan":
       return handleNotifyDan(args);
     case "lookup_project":
@@ -111,6 +158,10 @@ export async function executeToolCall(
       return handleListServices(args);
     case "check_availability":
       return handleCheckAvailability(args);
+    case "check_calendar":
+      return handleCheckCalendar(args);
+    case "book_meeting":
+      return handleBookMeeting(args);
     default:
       return { success: false, data: { error: `Unknown tool: ${name}` } };
   }
@@ -118,12 +169,13 @@ export async function executeToolCall(
 
 async function handleCaptureLead(
   args: Record<string, unknown>,
-  supabaseInsert?: (table: string, data: Record<string, unknown>) => Promise<void>
+  supabaseInsert?: (table: string, data: Record<string, unknown>) => Promise<void>,
+  conversationId?: string | null
 ): Promise<ToolResult> {
   const email = args.email as string;
   if (!email) return { success: false, data: { error: "Email is required" } };
 
-  const leadData = {
+  const leadData: Record<string, unknown> = {
     name: (args.name as string) || null,
     email,
     phone: (args.phone as string) || null,
@@ -134,25 +186,29 @@ async function handleCaptureLead(
     source: "agent",
     status: "new",
   };
+  if (conversationId) leadData.conversation_id = conversationId;
 
   // Save to Supabase
   if (supabaseInsert) {
     try {
       await supabaseInsert("leads", leadData);
+      console.log("[agent] ✓ lead saved to Supabase:", email);
     } catch (err) {
-      console.error("[agent] lead insert failed:", err);
+      console.error("[agent] ✗ lead insert FAILED for", email, "— error:", err);
     }
+  } else {
+    console.warn("[agent] supabaseInsert callback not provided — lead not saved to DB");
   }
 
   // Email notification to Dan
   await notifyLeadEmail({
-    name: leadData.name ?? undefined,
-    email: leadData.email,
-    phone: leadData.phone ?? undefined,
-    company: leadData.company ?? undefined,
-    projectType: leadData.project_type ?? undefined,
-    timeline: leadData.timeline ?? undefined,
-    intent: leadData.intent ?? undefined,
+    name: (leadData.name as string) ?? undefined,
+    email: leadData.email as string,
+    phone: (leadData.phone as string) ?? undefined,
+    company: (leadData.company as string) ?? undefined,
+    projectType: (leadData.project_type as string) ?? undefined,
+    timeline: (leadData.timeline as string) ?? undefined,
+    intent: (leadData.intent as string) ?? undefined,
   });
 
   return {
@@ -247,7 +303,7 @@ function handleCheckAvailability(args: Record<string, unknown>): Promise<ToolRes
 
   const result = {
     status: "Available for new work",
-    location: "Lagos, Nigeria — Remote worldwide",
+    location: "Remote worldwide · WAT (UTC+1)",
     timezone: "WAT (UTC+1)",
     engagementTypes: filtered.map((e) => ({
       type: e.label,
@@ -258,4 +314,94 @@ function handleCheckAvailability(args: Record<string, unknown>): Promise<ToolRes
   };
 
   return Promise.resolve({ success: true, data: result });
+}
+
+async function handleCheckCalendar(args: Record<string, unknown>): Promise<ToolResult> {
+  if (!isCalendarConfigured()) {
+    return {
+      success: true,
+      data: {
+        message: "Calendar integration is not set up yet. Tell the visitor: 'My calendar integration is coming soon — for now, share your email and preferred time, and I'll get back to you directly.'",
+      },
+    };
+  }
+
+  const days = Math.min((args.days as number) || 7, 14);
+  try {
+    const { busy, timeZone } = await getFreeBusy(days);
+
+    if (busy.length === 0) {
+      return {
+        success: true,
+        data: {
+          message: `Dan's calendar is open for the next ${days} days.`,
+          timeZone,
+          busySlots: [],
+          suggestion: "Suggest a few time slots and ask the visitor which works best.",
+        },
+      };
+    }
+
+    const busyFormatted = busy.map((b) => ({
+      start: new Date(b.start).toLocaleString("en-GB", { timeZone: "Africa/Lagos" }),
+      end: new Date(b.end).toLocaleString("en-GB", { timeZone: "Africa/Lagos" }),
+    }));
+
+    return {
+      success: true,
+      data: {
+        message: `Found ${busy.length} busy slots in the next ${days} days. Suggest times that avoid these.`,
+        timeZone,
+        busySlots: busyFormatted,
+        suggestion: "Present 2-3 available time slots to the visitor and ask which works best.",
+      },
+    };
+  } catch (err) {
+    console.error("[agent] calendar check failed:", err);
+    return {
+      success: false,
+      data: { error: "Could not check calendar. Ask the visitor to share their preferred time and email instead." },
+    };
+  }
+}
+
+async function handleBookMeeting(args: Record<string, unknown>): Promise<ToolResult> {
+  if (!isCalendarConfigured()) {
+    return {
+      success: false,
+      data: { error: "Calendar integration is not set up yet. Capture the visitor's email and preferred time, and let them know Dan will confirm manually." },
+    };
+  }
+
+  const attendeeEmail = args.attendeeEmail as string;
+  const startTime = args.startTime as string;
+  const summary = args.summary as string;
+
+  if (!attendeeEmail || !startTime || !summary) {
+    return { success: false, data: { error: "Need attendeeEmail, startTime, and summary to book a meeting." } };
+  }
+
+  try {
+    const result = await createMeeting({
+      attendeeEmail,
+      startTime,
+      summary,
+      description: (args.description as string) || undefined,
+      durationMinutes: (args.durationMinutes as number) || 30,
+    });
+
+    return {
+      success: true,
+      data: {
+        message: `Meeting booked! A Google Meet invite has been sent to ${attendeeEmail}. Dan will see it on his calendar.`,
+        eventLink: result.htmlLink,
+      },
+    };
+  } catch (err) {
+    console.error("[agent] meeting booking failed:", err);
+    return {
+      success: false,
+      data: { error: "Could not book the meeting. Capture the visitor's email and preferred time, and let them know Dan will confirm manually." },
+    };
+  }
 }

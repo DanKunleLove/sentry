@@ -5,7 +5,7 @@ export const experience: Experience[] = [
     company: "Mabi Labs",
     companyUrl: "https://mabilabs.ai",
     role: "Founding Member & Lead AI Specialist",
-    location: "Lagos, Nigeria · Remote-first",
+    location: "Remote-first",
     start: "2024-01",
     end: "Present",
     kind: "founding",

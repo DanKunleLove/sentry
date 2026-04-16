@@ -25,12 +25,62 @@ const BodySchema = z.object({
 /** Insert helper for Supabase — no-ops if not configured. */
 async function supabaseInsert(table: string, data: Record<string, unknown>) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    console.warn(`[agent] Supabase not configured — skipping ${table} insert.`);
+    console.error(`[agent] ✗ SUPABASE ENV VARS MISSING — cannot insert into ${table}. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in Vercel.`);
     return;
   }
   const sb = getAdminSupabase();
   const { error } = await sb.from(table).insert(data);
-  if (error) throw error;
+  if (error) {
+    console.error(`[agent] ✗ Supabase insert into ${table} failed:`, error.message, error.details);
+    throw error;
+  }
+  console.log(`[agent] ✓ inserted into ${table}`);
+}
+
+/** Upsert conversation record — creates on first message, updates on subsequent. */
+async function upsertConversation(
+  sessionId: string,
+  messages: { role: string; content: string }[],
+  req: NextRequest
+) {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  const sb = getAdminSupabase();
+
+  // Check if conversation exists
+  const { data: existing } = await sb
+    .from("conversations")
+    .select("id")
+    .eq("session_id", sessionId)
+    .maybeSingle();
+
+  if (existing) {
+    // Update existing conversation
+    await sb
+      .from("conversations")
+      .update({ messages: JSON.stringify(messages), updated_at: new Date().toISOString() })
+      .eq("session_id", sessionId);
+    return existing.id as string;
+  }
+
+  // Create new conversation
+  const { data: created, error } = await sb
+    .from("conversations")
+    .insert({
+      session_id: sessionId,
+      referrer: req.headers.get("referer") || null,
+      user_agent: req.headers.get("user-agent") || null,
+      country: req.headers.get("x-vercel-ip-country") || null,
+      messages: JSON.stringify(messages),
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    console.error("[agent] ✗ conversation upsert failed:", error.message);
+    return null;
+  }
+  console.log("[agent] ✓ conversation saved:", created.id);
+  return created.id as string;
 }
 
 export async function POST(req: NextRequest) {
@@ -62,8 +112,44 @@ export async function POST(req: NextRequest) {
   }
 
   const gemini = getGemini();
+  const sessionId = parsed.sessionId || crypto.randomUUID();
+
+  // Check for returning visitor memory
+  let memoryContext = "";
+  if (parsed.sessionId && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const sb = getAdminSupabase();
+      const { data: pastConvos } = await sb
+        .from("conversations")
+        .select("messages, created_at")
+        .eq("session_id", parsed.sessionId)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      if (pastConvos && pastConvos.length > 0 && pastConvos[0].messages) {
+        const pastMessages = typeof pastConvos[0].messages === "string"
+          ? JSON.parse(pastConvos[0].messages)
+          : pastConvos[0].messages;
+        if (Array.isArray(pastMessages) && pastMessages.length > 2) {
+          // Extract key topics from past conversation
+          const userMessages = pastMessages
+            .filter((m: { role: string }) => m.role === "user")
+            .map((m: { content: string }) => m.content)
+            .slice(0, 5)
+            .join(" | ");
+          memoryContext = `\n\n## Returning Visitor Context\nThis visitor has chatted with you before. Their previous messages touched on: "${userMessages}". Acknowledge naturally that you remember them — don't be robotic about it, just weave it in warmly if relevant.`;
+        }
+      }
+    } catch (err) {
+      console.error("[agent] memory lookup error:", err);
+    }
+  }
 
   // Build conversation history for Gemini
+  const systemPrompt = memoryContext
+    ? personaMarkdown + memoryContext
+    : personaMarkdown;
+
   const contents = parsed.messages.map((m) => ({
     role: m.role,
     parts: [{ text: m.content }],
@@ -79,6 +165,14 @@ export async function POST(req: NextRequest) {
       }
 
       try {
+        // Upsert conversation to Supabase (fire-and-forget for the initial save)
+        let conversationId: string | null = null;
+        try {
+          conversationId = await upsertConversation(sessionId, parsed.messages, req);
+        } catch (err) {
+          console.error("[agent] conversation upsert error:", err);
+        }
+
         let currentContents = [...contents];
         let round = 0;
 
@@ -90,9 +184,10 @@ export async function POST(req: NextRequest) {
             model: GEMINI_MODEL,
             contents: currentContents,
             config: {
-              systemInstruction: personaMarkdown,
+              systemInstruction: systemPrompt,
               temperature: 0.7,
-              maxOutputTokens: 1024,
+              maxOutputTokens: 2048,
+              thinkingConfig: { thinkingBudget: 4096 },
               tools: [{ functionDeclarations: agentTools }],
             },
           });
@@ -113,7 +208,7 @@ export async function POST(req: NextRequest) {
 
               emit({ type: "tool_start", tool: toolName });
 
-              const result = await executeToolCall(toolName, toolArgs, supabaseInsert);
+              const result = await executeToolCall(toolName, toolArgs, supabaseInsert, conversationId);
 
               emit({ type: "tool_end", tool: toolName, success: result.success });
 
@@ -151,9 +246,10 @@ export async function POST(req: NextRequest) {
             model: GEMINI_MODEL,
             contents: currentContents,
             config: {
-              systemInstruction: personaMarkdown,
+              systemInstruction: systemPrompt,
               temperature: 0.7,
-              maxOutputTokens: 1024,
+              maxOutputTokens: 2048,
+              thinkingConfig: { thinkingBudget: 4096 },
               // No tools on final streaming pass to avoid re-triggering
             },
           });
@@ -167,6 +263,26 @@ export async function POST(req: NextRequest) {
         }
 
         emit({ type: "done" });
+
+        // Save final conversation state with agent response
+        if (conversationId && sessionId) {
+          try {
+            // Collect all text parts from the final contents for saving
+            const finalMessages = currentContents
+              .filter((c) => c.parts.some((p: any) => p.text))
+              .map((c) => ({
+                role: c.role,
+                content: c.parts
+                  .filter((p: any) => p.text)
+                  .map((p: any) => p.text)
+                  .join(""),
+              }));
+            await upsertConversation(sessionId, finalMessages, req);
+          } catch (err) {
+            console.error("[agent] final conversation save error:", err);
+          }
+        }
+
         controller.close();
       } catch (err) {
         console.error("[agent] error:", err);

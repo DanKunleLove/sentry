@@ -2,7 +2,7 @@ export const hero = {
   name: "Adelusi Dan Kunle",
   roles: ["AI & Automation Architect", "LLM Specialist", "AI Engineer"],
   lede: "Shipping production AI products, agent systems and automation pipelines for clients across UK · US · Canada · Dubai · and beyond.",
-  location: "Lagos, Nigeria — Remote worldwide",
+  location: "Remote worldwide",
 };
 
 export const taglines: string[] = [
@@ -72,7 +72,7 @@ export const stats: { value: string; label: string }[] = [
 export const bio = {
   headline: "AI & Automation Architect who ships across the stack.",
   paragraphs: [
-    "I'm Adelusi Dan Kunle — an AI & Automation Architect based in Lagos, Nigeria. I build production AI products, agent systems, and automation pipelines for clients across the UK, US, Canada, Dubai, and beyond.",
+    "I'm Adelusi Dan Kunle — an AI & Automation Architect. I build production AI products, agent systems, and automation pipelines for clients across the UK, US, Canada, Dubai, and beyond.",
     "My path into AI started at the intersection of Physics and Computer Science at Federal University Oye Ekiti, where I developed a first-principles approach to problem-solving. From there, I moved quickly into production AI — shipping LLM integrations, voice agents, multi-workflow automations, and creative-AI pipelines for international clients.",
     "Beyond the technical, I bring leadership and innovative thinking to every project. I served as Vice President of the Physics Department (2024–2025 session) and as Administrative Assistant in the Student Union Government, serving a university of over 50,000 students. I'm consistently at the top of my class academically (4.5/5.0 CGPA) and bring that same rigour to every product I ship.",
     "I'm building at the intersection of AI, automation, and human creativity — making intelligent systems accessible to businesses of all sizes. Whether it's an AI agent that handles your customer support, an automation pipeline that saves your team days of manual work, or a creative AI system that produces content at scale — I orchestrate the tools to make it happen.",
