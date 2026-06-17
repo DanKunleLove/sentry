@@ -67,6 +67,18 @@ export interface Experience {
   kind: ExperienceKind;
 }
 
+export interface Speaking {
+  event: string;
+  series?: string;
+  org: string;
+  role: string;
+  title: string;
+  location: string;
+  date: string;
+  highlights: string[];
+  links?: { label: string; href: string }[];
+}
+
 export interface Education {
   institution: string;
   degree: string;

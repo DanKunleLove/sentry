@@ -10,6 +10,7 @@ export const taglines: string[] = [
   "From idea to deployed product — end to end",
   "AI Engineer · Automation Architect · LLM Specialist",
   "First-principles thinking, fast execution",
+  "GDG on Campus 'Build with AI' speaker",
   "Available: freelance · contract · remote · full-time",
 ];
 

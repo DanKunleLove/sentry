@@ -7,7 +7,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { ExperienceTimeline } from "@/components/sections/experience-timeline";
 import { bio, hero } from "@/content/about";
 import { skillGroups } from "@/content/skills";
-import { education } from "@/content/experience";
+import { education, speaking } from "@/content/experience";
 
 export const metadata: Metadata = {
   title: "About — Adelusi Dan Kunle",
@@ -58,6 +58,73 @@ export default function AboutPage() {
         </Container>
 
         <ExperienceTimeline />
+
+        <section className="section-y">
+          <Container>
+            <Reveal>
+              <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/50">
+                Speaking &amp; Community
+              </p>
+              <h2 className="display-md mb-10 max-w-2xl md:mb-16">
+                Invited to teach it, not just ship it.
+              </h2>
+            </Reveal>
+            <div className="space-y-10">
+              {speaking.map((t, i) => (
+                <Reveal key={t.event + t.title} delay={i * 0.06}>
+                  <div className="grid gap-4 border-t border-bone/10 pt-8 md:grid-cols-[auto_1fr] md:gap-16">
+                    <div className="md:w-[200px]">
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-bone/50">
+                        {formatTalkDate(t.date)}
+                      </p>
+                      <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-bone/40">
+                        {t.location}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-accent-3">
+                        {t.org}
+                      </p>
+                      <h3 className="font-serif text-2xl leading-tight md:text-3xl">
+                        {t.title}
+                      </h3>
+                      <p className="mt-2 font-mono text-xs uppercase tracking-wider text-bone/60">
+                        {t.role}
+                        {t.series ? ` · ${t.series}` : ""}
+                      </p>
+                      <ul className="mt-5 space-y-2">
+                        {t.highlights.map((h) => (
+                          <li
+                            key={h}
+                            className="flex gap-3 text-bone/75 leading-relaxed"
+                          >
+                            <span className="text-accent">▸</span>
+                            <span>{h}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      {t.links && t.links.length > 0 && (
+                        <div className="mt-5 flex flex-wrap gap-3">
+                          {t.links.map((l) => (
+                            <a
+                              key={l.href}
+                              href={l.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded-full border border-bone/12 bg-bone/4 px-4 py-1.5 font-mono text-[11px] uppercase tracking-wider text-bone/75 transition-colors hover:border-accent/40 hover:text-bone"
+                            >
+                              {l.label} ↗
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
 
         <section className="section-y">
           <Container>
@@ -146,6 +213,16 @@ export default function AboutPage() {
       <Footer />
     </>
   );
+}
+
+function formatTalkDate(iso: string) {
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  const [year, month, day] = iso.split("-").map(Number);
+  if (!year || !month || !day) return iso;
+  return `${day} ${months[month - 1]} ${year}`;
 }
 
 function Row({ label, value }: { label: string; value: string }) {
