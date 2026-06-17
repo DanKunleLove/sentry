@@ -14,6 +14,7 @@ const ROUTES = [
   { path: "/about", name: "about" },
   { path: "/work", name: "work-index" },
   { path: "/work/phantm", name: "work-phantm" },
+  { path: "/work/sypi", name: "work-sypi" },
   { path: "/work/dalle", name: "work-dalle" },
   { path: "/work/studia", name: "work-studia" },
   { path: "/work/mocha-property", name: "work-mocha" },

@@ -58,6 +58,51 @@ export const works: Work[] = [
     order: 1,
   },
   {
+    slug: "sypi",
+    title: "Sypi",
+    tagline: "Design systems you can see and control",
+    year: 2026,
+    client: "Independent",
+    role: "Founder & Sole Engineer",
+    status: "in-development",
+    categories: ["ai", "full-stack", "platform", "agent"],
+    stack: ["Next.js", "Claude", "Liveblocks", "Trigger.dev", "Vercel"],
+    cover: {
+      src: "/images/work/sypi-cover.webp",
+      alt: "Sypi — design systems you can see and control",
+      width: 1600,
+      height: 900,
+    },
+    links: [
+      { label: "Live", href: "https://sypi-dev.vercel.app" },
+    ],
+    metrics: [
+      { label: "Flow", value: "Plan → Canvas → Export" },
+      { label: "Collaboration", value: "Real-time" },
+      { label: "Export", value: "Agent bundle" },
+    ],
+    summary:
+      "Sypi turns a plain-English description of a system into an AI-drafted architecture you approve, map on a collaborative canvas, and export as a spec bundle that AI coding agents can build from. Bring-your-own-model, real-time multiplayer, design review built in.",
+    reasoning:
+      "Architecture lives in people's heads and dies in stale diagrams. The core move is making the plan a first-class, reviewable artifact: the AI drafts a structure, a human approves it before anything renders, and the canvas stays the single source of truth that exports cleanly into the formats coding agents actually consume (CLAUDE.md, ARCHITECTURE.md, a schema, and a task list). Plan-then-execute beats autocomplete-then-pray.",
+    problem:
+      "Teams design systems in whiteboard tools that can't reason, and reason about systems in chat tools that can't draw. Neither produces anything an AI coding agent can build from — so the architecture gets re-explained, by hand, every time work starts.",
+    approach: [
+      "Plan-then-execute AI: describe the system in plain English, get an AI-drafted plan to approve before it maps to the canvas — bring your own model.",
+      "Real-time collaborative canvas with live cursors and presence avatars (Liveblocks), threaded @mention comments with email notifications.",
+      "AI design review that flags missing caches, security gaps, and anti-patterns before they ship.",
+      "Agent bundle export — a ZIP with CLAUDE.md, ARCHITECTURE.md, sypi-schema.json, and TASKS.md — plus PNG, Mermaid, Markdown, and Lovable/v0 prompts.",
+    ],
+    outcome: [
+      "Live preview shipped — free to try, no card required.",
+      "Templates for microservices, serverless, event-driven, and API-gateway patterns.",
+      "Bridges system design and AI-assisted implementation in one tool.",
+    ],
+    tags: ["System Design", "AI Agents", "Real-time Collab", "Architecture", "Next.js"],
+    featured: true,
+    order: 2,
+  },
+  {
     slug: "dalle",
     title: "Dalle",
     tagline: "Premium voice agent — Cerebras · Cartesia · LiveKit",
@@ -97,7 +142,7 @@ export const works: Work[] = [
     ],
     tags: ["Voice Agent", "WebRTC", "Cerebras", "LiveKit", "Low Latency"],
     featured: true,
-    order: 2,
+    order: 3,
   },
   {
     slug: "studia",
@@ -139,7 +184,7 @@ export const works: Work[] = [
     ],
     tags: ["RAG", "Multi-tenant", "Education", "Citations", "Next.js"],
     featured: true,
-    order: 3,
+    order: 4,
   },
   {
     slug: "mocha-property",
@@ -185,7 +230,7 @@ export const works: Work[] = [
     ],
     tags: ["n8n", "Automation", "Property Management", "AI Routing"],
     featured: true,
-    order: 4,
+    order: 5,
   },
   {
     slug: "telos",
@@ -225,7 +270,7 @@ export const works: Work[] = [
     ],
     tags: ["Freelance Platform", "Career Coaching", "AI Agent", "Analytics"],
     featured: false,
-    order: 5,
+    order: 6,
   },
   {
     slug: "liveself",
@@ -265,7 +310,7 @@ export const works: Work[] = [
     ],
     tags: ["Digital Twin", "Voice", "Presence", "Agent"],
     featured: false,
-    order: 6,
+    order: 7,
   },
   {
     slug: "mabilabs",
@@ -306,8 +351,8 @@ export const works: Work[] = [
       "Clearer inbound from the right clients.",
     ],
     tags: ["Agency Site", "Positioning", "Next.js"],
-    featured: false,
-    order: 7,
+    featured: true,
+    order: 8,
   },
   {
     slug: "deep-research-agent",
@@ -346,7 +391,7 @@ export const works: Work[] = [
     ],
     tags: ["Research Agent", "Structured Output", "Citations"],
     featured: false,
-    order: 8,
+    order: 9,
   },
   {
     slug: "purselley",
@@ -385,7 +430,7 @@ export const works: Work[] = [
     ],
     tags: ["iOS", "Chemistry", "Premium", "App Store"],
     featured: false,
-    order: 9,
+    order: 10,
   },
 ];
 

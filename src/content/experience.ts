@@ -1,4 +1,4 @@
-import type { Experience } from "./types";
+import type { Experience, Speaking } from "./types";
 
 export const experience: Experience[] = [
   {
@@ -53,6 +53,30 @@ export const experience: Experience[] = [
       "Completed 20+ AI and software projects for clients worldwide: mobile apps, SaaS builds, AI automation, and LLM integrations.",
       "Built and published iOS and Android apps with full App Store deployment pipelines.",
       "Developed n8n-powered lead-generation workflows integrating Apollo.io, Apify scraping, and AI-personalised email delivery at scale.",
+    ],
+  },
+];
+
+export const speaking: Speaking[] = [
+  {
+    event: "Build with AI 2026",
+    series: "Google Developer Groups on Campus",
+    org: "GDG on Campus · Federal University Oye Ekiti",
+    role: "Invited Speaker",
+    title:
+      "Building Intelligent Systems: How to Use First-Principles Thinking to Build AI Products",
+    location: "Oye Ekiti, Nigeria",
+    date: "2026-05-29",
+    highlights: [
+      "Day-3 hands-on session at Google's Build with AI series — taught a first-principles framework for shipping real AI products instead of endlessly consuming tutorials.",
+      "Broke every intelligent system down to three parts — Knowledge → Reasoning → Action — and showed how to map any campus problem onto it.",
+      "Demoed my own AI twin live (this portfolio), built on Gemini via Google AI Studio, qualifying leads and booking calls end-to-end.",
+    ],
+    links: [
+      {
+        label: "Recap",
+        href: "https://www.linkedin.com/posts/dan-adelusi-057733322_agenticai-aiengineering-googledevelopergroups-ugcPost-7467983555676168192-uRcn",
+      },
     ],
   },
 ];
