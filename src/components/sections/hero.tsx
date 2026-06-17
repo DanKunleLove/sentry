@@ -8,6 +8,7 @@ import { RotatingTagline } from "@/components/motion/rotating-tagline";
 import { Magnetic } from "@/components/motion/magnetic";
 import { Reveal } from "@/components/motion/reveal";
 import { ButtonLink } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { hero, taglines } from "@/content/about";
 
 export function Hero() {
@@ -36,6 +37,22 @@ export function Hero() {
               <p className="mt-6 font-mono text-xs uppercase tracking-wider text-accent">
                 <RotatingTagline taglines={taglines} />
               </p>
+            </Reveal>
+
+            <Reveal delay={0.7} className="mt-6">
+              <Link
+                href="/about"
+                aria-label="Google Developer Groups on Campus speaker — Build with AI 2026"
+                className="inline-block"
+              >
+                <Badge tone="glass" className="py-1.5">
+                  <span
+                    aria-hidden
+                    className="h-1.5 w-1.5 rounded-full bg-accent-3"
+                  />
+                  Google Developer Groups · Speaker — Build with AI 2026
+                </Badge>
+              </Link>
             </Reveal>
 
             <Reveal delay={0.8} className="mt-10 flex flex-wrap gap-4">

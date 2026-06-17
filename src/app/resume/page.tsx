@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Nav } from "@/components/layout/nav";
 import { Footer } from "@/components/layout/footer";
 import { Container } from "@/components/layout/container";
-import { experience, education } from "@/content/experience";
+import { experience, education, speaking } from "@/content/experience";
 import { skillGroups } from "@/content/skills";
 import { PrintButton } from "@/components/ui/print-button";
 import { site } from "@/lib/site";
@@ -80,6 +80,32 @@ export default function ResumePage() {
             </div>
           </Section>
 
+          <Section title="Speaking & Community">
+            <div className="space-y-6">
+              {speaking.map((t) => (
+                <div key={t.event + t.title}>
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="font-semibold">{t.title}</p>
+                    <p className="font-mono text-xs uppercase tracking-wider text-bone/60 print:text-black/70">
+                      {formatTalkDate(t.date)}
+                    </p>
+                  </div>
+                  <p className="font-mono text-xs uppercase tracking-wider text-accent print:text-black">
+                    {t.role} · {t.org}
+                  </p>
+                  <ul className="mt-3 space-y-1.5 text-sm text-bone/80 print:text-black/85">
+                    {t.highlights.map((h) => (
+                      <li key={h} className="flex gap-3">
+                        <span className="text-accent print:text-black/60">▸</span>
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </Section>
+
           <Section title="Education">
             {education.map((e) => (
               <div key={e.institution} className="mb-4">
@@ -113,6 +139,16 @@ export default function ResumePage() {
       <Footer />
     </>
   );
+}
+
+function formatTalkDate(iso: string) {
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  const [year, month, day] = iso.split("-").map(Number);
+  if (!year || !month || !day) return iso;
+  return `${day} ${months[month - 1]} ${year}`;
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
