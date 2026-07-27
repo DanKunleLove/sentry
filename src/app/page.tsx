@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { Nav } from "@/components/layout/nav";
+import { BookedToast } from "@/components/ui/booked-toast";
 import { Footer } from "@/components/layout/footer";
 import { NoiseOverlay } from "@/components/motion/noise-overlay";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
@@ -27,6 +29,9 @@ export default function Home() {
         <ExperienceTimeline />
         <ChatTeaser />
       </main>
+      <Suspense fallback={null}>
+        <BookedToast />
+      </Suspense>
       <Footer />
     </>
   );

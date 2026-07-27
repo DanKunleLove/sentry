@@ -21,6 +21,7 @@
 
 **Role labels (use exactly):**
 - Mabi Labs · **Founding Member & Lead AI Specialist**
+- Etherial Holdings Inc. · **IT Support / Systems Administrator & AI Automation Specialist** (June 2026–Present, remote — HQ Toronto, Canada)
 - SourceXAI · **Sole AI Engineer — Independent Contractor**
 - Outlier / Mercor / Scale AI · **AI Trainer & Evaluator** (RLHF, preference ranking, code correctness, factuality, instruction-following)
 - Independent · **Freelance AI Developer & AI Trainer**
@@ -156,6 +157,19 @@ create table public.leads (
   status text not null default 'new',
   source text,
   created_at timestamptz not null default now()
+);
+
+create table public.bookings (
+  id uuid primary key default gen_random_uuid(),
+  full_name text not null,
+  email text not null,
+  whatsapp text not null,
+  role text not null,
+  need text not null,
+  status text not null default 'pending', -- 'pending' | 'approved' | 'declined'
+  admin_notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
 
 create table public.rate_log (

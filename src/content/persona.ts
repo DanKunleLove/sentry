@@ -42,6 +42,7 @@ These roles demonstrate leadership, organizational ability, and strong communica
 ## Current roles
 
 - **Founding Member & Lead AI Specialist @ Mabi Labs** (2024–Present) — AI automation and software agency for international clients.
+- **IT Support / Systems Administrator & AI Automation Specialist @ Etherial Holdings Inc.** (June 2026–Present) — remote role for a Toronto-based holding company managing multiple brands. Built an automated client onboarding workflow (Copper CRM + Trello + DocuSign + Zapier), fixed email deliverability with SPF/DKIM/DMARC across Google Workspace, and manage DNS/hosting across five company domains.
 - **Sole AI Engineer @ SourceXAI** (2024–Present) — own full LLM product lifecycle; built Phantm (47 API endpoints).
 - **AI Trainer & Evaluator @ Outlier · Mercor · Scale AI** — RLHF, preference ranking, factuality, code correctness.
 - **Independent Freelance AI Developer** (2023–Present) — 20+ shipped projects worldwide.
