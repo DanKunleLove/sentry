@@ -15,6 +15,7 @@ const BookingSchema = z.object({
   whatsapp: z.string().min(7).max(30),
   role: z.string().min(2).max(160),
   need: z.string().min(10).max(2000),
+  source: z.string().max(60).optional(),
   website: z.string().optional(), // honeypot
 });
 
@@ -67,6 +68,7 @@ export async function POST(req: NextRequest) {
       whatsapp: data.whatsapp,
       role: data.role,
       need: data.need,
+      source: data.source || null,
       status: "pending",
     })
     .select("id, created_at")
@@ -88,6 +90,7 @@ export async function POST(req: NextRequest) {
       whatsapp: data.whatsapp,
       role: data.role,
       need: data.need,
+      source: data.source,
     }),
     appendBookingRow({
       createdAt: inserted.created_at,
@@ -97,6 +100,7 @@ export async function POST(req: NextRequest) {
       role: data.role,
       need: data.need,
       status: "pending",
+      source: data.source ?? "",
     }),
   ]);
 

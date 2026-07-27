@@ -12,6 +12,7 @@ interface Booking {
   whatsapp: string;
   role: string;
   need: string;
+  source: string | null;
   status: "pending" | "approved" | "declined";
   admin_notes: string | null;
   created_at: string;
@@ -217,6 +218,11 @@ export function AdminBookings() {
                 >
                   {b.status}
                 </span>
+                {b.source && (
+                  <span className="rounded-full bg-accent-3/15 px-3 py-1 font-mono text-[11px] tracking-wider text-accent-3">
+                    {b.source}
+                  </span>
+                )}
                 <span className="ml-auto font-mono text-[11px] text-bone/40">
                   {new Date(b.created_at).toLocaleString()}
                 </span>

@@ -91,6 +91,7 @@ export interface BookingEmailData {
   whatsapp: string;
   role: string;
   need: string;
+  source?: string;
 }
 
 /** Notify Dan about a new /book submission. */
@@ -106,6 +107,7 @@ export async function notifyBookingEmail(b: BookingEmailData): Promise<boolean> 
         <tr><td style="padding:4px 12px 4px 0;color:#666;">Email</td><td><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#666;">WhatsApp</td><td><a href="https://wa.me/${waDigits}">${esc(b.whatsapp)}</a></td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#666;">Role</td><td>${esc(b.role)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Source</td><td>${esc(b.source || "direct")}</td></tr>
       </table>
       <h3>What they need</h3>
       <p style="background:#f5f5f5;padding:12px;border-radius:8px;">${esc(b.need)}</p>

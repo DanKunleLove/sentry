@@ -8,6 +8,7 @@ create table if not exists public.bookings (
   whatsapp text not null,
   role text not null,
   need text not null,
+  source text, -- content pillar / platform attribution from ?src= on /book
   status text not null default 'pending' check (status in ('pending', 'approved', 'declined')),
   admin_notes text,
   created_at timestamptz not null default now(),

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Nav } from "@/components/layout/nav";
 import { Footer } from "@/components/layout/footer";
@@ -63,7 +64,9 @@ export default function BookPage() {
               </p>
             </Reveal>
             <Reveal delay={0.1}>
-              <BookingForm />
+              <Suspense fallback={null}>
+                <BookingForm />
+              </Suspense>
             </Reveal>
           </div>
         </Container>

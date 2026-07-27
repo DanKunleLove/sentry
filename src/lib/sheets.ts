@@ -87,6 +87,7 @@ export interface BookingRow {
   role: string;
   need: string;
   status: string;
+  source: string;
 }
 
 /** Append one booking as a row. Returns false (with a log) on any failure. */
@@ -121,6 +122,7 @@ export async function appendBookingRow(row: BookingRow): Promise<boolean> {
               row.role,
               row.need,
               row.status,
+              row.source,
             ],
           ],
         }),

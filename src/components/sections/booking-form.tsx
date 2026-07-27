@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 
@@ -13,8 +13,12 @@ const labelClass =
 
 export function BookingForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  // Content-pillar attribution: links in bios/videos carry ?src=tiktok-automation etc.
+  const source = searchParams.get("src") ?? searchParams.get("utm_source") ?? "";
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,6 +32,7 @@ export function BookingForm() {
       whatsapp: String(form.get("whatsapp") ?? "").trim(),
       role: String(form.get("role") ?? "").trim(),
       need: String(form.get("need") ?? "").trim(),
+      source: source.slice(0, 60),
       website: String(form.get("website") ?? ""), // honeypot
     };
 

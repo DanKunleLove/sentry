@@ -166,6 +166,7 @@ create table public.bookings (
   whatsapp text not null,
   role text not null,
   need text not null,
+  source text, -- content pillar / platform attribution (?src= on /book)
   status text not null default 'pending', -- 'pending' | 'approved' | 'declined'
   admin_notes text,
   created_at timestamptz not null default now(),
