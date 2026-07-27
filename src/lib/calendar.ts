@@ -92,13 +92,14 @@ export async function createMeeting(opts: {
   startTime: string; // ISO 8601
   durationMinutes?: number;
   attendeeEmail: string;
-}): Promise<{ eventId: string; htmlLink: string }> {
+}): Promise<{ eventId: string; htmlLink: string; meetLink: string | null }> {
   const token = await getAccessToken();
   const duration = opts.durationMinutes ?? 30;
   const start = new Date(opts.startTime);
   const end = new Date(start.getTime() + duration * 60 * 1000);
 
-  const res = await fetch(`${CALENDAR_API}/calendars/${CALENDAR_ID}/events?sendUpdates=all`, {
+  // conferenceDataVersion=1 is required or the API silently drops the Meet request
+  const res = await fetch(`${CALENDAR_API}/calendars/${CALENDAR_ID}/events?sendUpdates=all&conferenceDataVersion=1`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -135,5 +136,12 @@ export async function createMeeting(opts: {
   return {
     eventId: event.id,
     htmlLink: event.htmlLink,
+    meetLink:
+      event.hangoutLink ??
+      event.conferenceData?.entryPoints?.find(
+        (e: { entryPointType?: string; uri?: string }) =>
+          e.entryPointType === "video"
+      )?.uri ??
+      null,
   };
 }

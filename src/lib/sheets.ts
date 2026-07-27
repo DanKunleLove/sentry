@@ -88,6 +88,8 @@ export interface BookingRow {
   need: string;
   status: string;
   source: string;
+  social?: string;
+  slotStart?: string;
 }
 
 /** Append one booking as a row. Returns false (with a log) on any failure. */
@@ -123,6 +125,8 @@ export async function appendBookingRow(row: BookingRow): Promise<boolean> {
               row.need,
               row.status,
               row.source,
+              row.social ?? "",
+              row.slotStart ?? "",
             ],
           ],
         }),

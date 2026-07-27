@@ -92,60 +92,143 @@ export interface BookingEmailData {
   role: string;
   need: string;
   source?: string;
+  social?: string;
+  slotStart?: string; // ISO UTC
+  visitorTz?: string;
+  wantsResources?: boolean;
 }
 
-/** Notify Dan about a new /book submission. */
-export async function notifyBookingEmail(b: BookingEmailData): Promise<boolean> {
+/** Format an ISO instant in a given IANA timezone, falling back to WAT. */
+function fmtSlot(iso: string, tz?: string): string {
+  const d = new Date(iso);
+  const opts: Intl.DateTimeFormatOptions = {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  };
+  try {
+    return new Intl.DateTimeFormat("en-GB", { ...opts, timeZone: tz || "Africa/Lagos" }).format(d);
+  } catch {
+    return new Intl.DateTimeFormat("en-GB", { ...opts, timeZone: "Africa/Lagos" }).format(d);
+  }
+}
+
+/** "their local time (+ WAT if different)" line for a slot. */
+function slotLine(slotStart: string, visitorTz?: string): string {
+  const local = fmtSlot(slotStart, visitorTz);
+  const wat = fmtSlot(slotStart, "Africa/Lagos");
+  return local === wat ? esc(local) : `${esc(local)} <span style="color:#666;">(${esc(wat)} WAT)</span>`;
+}
+
+/** Ensure a social handle/link renders as a clickable URL. */
+function socialHref(social: string): string {
+  return /^https?:\/\//i.test(social) ? social : `https://${social}`;
+}
+
+const btn = (href: string, label: string, bg: string) =>
+  `<a href="${href}" style="display:inline-block;background:${bg};color:#fff;text-decoration:none;padding:12px 28px;border-radius:999px;font-weight:600;margin-right:12px;">${label}</a>`;
+
+/**
+ * Notify Dan about a new /book request — includes the picked slot, the
+ * applicant's social link for vetting, and one-click Approve/Decline buttons.
+ */
+export async function notifyBookingEmail(
+  b: BookingEmailData,
+  actions?: { approveUrl: string; declineUrl: string }
+): Promise<boolean> {
   const waDigits = b.whatsapp.replace(/\D/g, "");
   return sendEmail({
     to: process.env.NOTIFICATION_EMAIL || undefined,
-    subject: `📅 New booking request: ${b.fullName}`,
+    subject: `📅 Session request: ${b.fullName}${b.slotStart ? ` — ${fmtSlot(b.slotStart, "Africa/Lagos")}` : ""}`,
     html: `
-      <h2>New free-session request from /book</h2>
+      <h2>New session request from /book</h2>
+      ${b.slotStart ? `<p style="font-size:16px;"><strong>Requested slot:</strong> ${fmtSlot(b.slotStart, "Africa/Lagos")} WAT</p>` : ""}
       <table style="border-collapse:collapse;font-family:sans-serif;">
         <tr><td style="padding:4px 12px 4px 0;color:#666;">Name</td><td>${esc(b.fullName)}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#666;">Email</td><td><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#666;">WhatsApp</td><td><a href="https://wa.me/${waDigits}">${esc(b.whatsapp)}</a></td></tr>
+        ${b.social ? `<tr><td style="padding:4px 12px 4px 0;color:#666;">Social</td><td><a href="${esc(socialHref(b.social))}">${esc(b.social)}</a></td></tr>` : ""}
         <tr><td style="padding:4px 12px 4px 0;color:#666;">Role</td><td>${esc(b.role)}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#666;">Source</td><td>${esc(b.source || "direct")}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#666;">Resources</td><td>${b.wantsResources ? "wants the pack (auto-sends after session)" : "no"}</td></tr>
       </table>
-      <h3>What they need</h3>
+      <h3>What they want from the session</h3>
       <p style="background:#f5f5f5;padding:12px;border-radius:8px;">${esc(b.need)}</p>
-      <p style="margin-top:16px;color:#666;font-size:12px;">Approve or decline in the admin panel · ${new Date().toISOString()}</p>
+      ${
+        actions
+          ? `<p style="margin:24px 0;">${btn(actions.approveUrl, "✓ Approve", "#1a7f37")}${btn(actions.declineUrl, "✕ Decline", "#57606a")}</p>
+             <p style="color:#666;font-size:12px;">Approving creates the calendar event + Google Meet link and confirms with them automatically. Buttons open a confirmation page — nothing happens on a stray click.</p>`
+          : `<p style="margin-top:16px;color:#666;font-size:12px;">Approve or decline in the admin panel.</p>`
+      }
+      <p style="margin-top:16px;color:#666;font-size:12px;">Sent by Sentry · ${new Date().toISOString()}</p>
     `,
   });
 }
 
-/** Tell an applicant their free session is confirmed. */
-export async function bookingApprovedEmail(b: {
+/** Instant "request received" email to the applicant — keeps the lead warm. */
+export async function bookingReceivedEmail(b: {
   fullName: string;
   email: string;
+  slotStart: string;
+  visitorTz?: string;
 }): Promise<boolean> {
   const firstName = b.fullName.split(" ")[0];
   return sendEmail({
     to: b.email,
     fromName: "Dan Adelusi",
-    subject: "Your free AI setup session is confirmed",
+    subject: "Got your session request — confirming shortly",
     html: `
       <div style="font-family:sans-serif;max-width:560px;">
         <p>Hi ${esc(firstName)},</p>
-        <p>Good news — I've reviewed your request and your free AI setup session is confirmed.</p>
-        <p><strong>Next steps:</strong></p>
-        <ol>
-          <li>I'll reach out on WhatsApp within the next day to agree a time that works for both of us.</li>
-          <li>You'll get a video call link before the session. <em>[Meeting link will be shared once we've picked a time.]</em></li>
-          <li>Come with your workflow or problem in mind — the more specific, the more we get done in 30 minutes.</li>
-        </ol>
+        <p>Your free AI setup session request is in for:</p>
+        <p style="background:#f5f5f5;padding:12px;border-radius:8px;font-size:16px;"><strong>${slotLine(b.slotStart, b.visitorTz)}</strong></p>
+        <p>I personally review every request. You'll get a confirmation email with your Google Meet link shortly — usually within a few hours.</p>
         <p>Talk soon,<br/>Dan Adelusi<br/>AI Engineer · Co-founder, Mabi Labs</p>
       </div>
     `,
   });
 }
 
-/** Politely decline an applicant. */
+/** Session confirmed — includes the real slot time and Google Meet link. */
+export async function bookingApprovedEmail(b: {
+  fullName: string;
+  email: string;
+  slotStart?: string | null;
+  visitorTz?: string | null;
+  meetLink?: string | null;
+}): Promise<boolean> {
+  const firstName = b.fullName.split(" ")[0];
+  return sendEmail({
+    to: b.email,
+    fromName: "Dan Adelusi",
+    subject: "Your free AI setup session is confirmed ✓",
+    html: `
+      <div style="font-family:sans-serif;max-width:560px;">
+        <p>Hi ${esc(firstName)},</p>
+        <p>Confirmed — your free AI setup session is locked in${b.slotStart ? " for:" : "."}</p>
+        ${b.slotStart ? `<p style="background:#f5f5f5;padding:12px;border-radius:8px;font-size:16px;"><strong>${slotLine(b.slotStart, b.visitorTz ?? undefined)}</strong></p>` : ""}
+        ${
+          b.meetLink
+            ? `<p style="margin:24px 0;"><a href="${esc(b.meetLink)}" style="display:inline-block;background:#1a7f37;color:#fff;text-decoration:none;padding:12px 28px;border-radius:999px;font-weight:600;">Join on Google Meet</a></p>
+               <p style="color:#666;font-size:13px;">You'll also find this link in the calendar invite that just landed in your inbox.</p>`
+            : `<p>A calendar invite with the video call link is on its way to this email address.</p>`
+        }
+        <p>Come with your workflow or problem in mind — the more specific, the more we get done in 30 minutes.</p>
+        <p>Talk soon,<br/>Dan Adelusi<br/>AI Engineer · Co-founder, Mabi Labs</p>
+      </div>
+    `,
+  });
+}
+
+/** Politely decline — with a link to pick another time. */
 export async function bookingDeclinedEmail(b: {
   fullName: string;
   email: string;
+  rebookUrl?: string;
 }): Promise<boolean> {
   const firstName = b.fullName.split(" ")[0];
   return sendEmail({
@@ -155,9 +238,36 @@ export async function bookingDeclinedEmail(b: {
     html: `
       <div style="font-family:sans-serif;max-width:560px;">
         <p>Hi ${esc(firstName)},</p>
-        <p>Thanks for requesting a free AI setup session. I'm currently fully booked, so I can't take your session right now.</p>
-        <p>I've kept your details on file, and I'll reach out as soon as a slot opens up. In the meantime, my content on Instagram and TikTok (@dankunleai) covers a lot of what we'd discuss.</p>
+        <p>Thanks for requesting a free AI setup session. I couldn't take this one — the slot didn't work out on my end.</p>
+        ${b.rebookUrl ? `<p style="margin:24px 0;"><a href="${esc(b.rebookUrl)}" style="display:inline-block;background:#0969da;color:#fff;text-decoration:none;padding:12px 28px;border-radius:999px;font-weight:600;">Pick another time</a></p>` : ""}
+        <p>In the meantime, my content on Instagram and TikTok (@dankunleai) covers a lot of what we'd discuss.</p>
         <p>Thanks for your patience,<br/>Dan Adelusi<br/>AI Engineer · Co-founder, Mabi Labs</p>
+      </div>
+    `,
+  });
+}
+
+/** Post-session resource pack delivery. Sent only AFTER an approved session ends. */
+export async function resourcesEmail(b: {
+  fullName: string;
+  email: string;
+  packTitle: string;
+  packUrl: string;
+  packBlurb: string;
+}): Promise<boolean> {
+  const firstName = b.fullName.split(" ")[0];
+  return sendEmail({
+    to: b.email,
+    fromName: "Dan Adelusi",
+    subject: `Your ${b.packTitle} — as promised`,
+    html: `
+      <div style="font-family:sans-serif;max-width:560px;">
+        <p>Hi ${esc(firstName)},</p>
+        <p>Great session — here's the resource pack I promised:</p>
+        <p>${esc(b.packBlurb)}</p>
+        <p style="margin:24px 0;"><a href="${esc(b.packUrl)}" style="display:inline-block;background:#0969da;color:#fff;text-decoration:none;padding:12px 28px;border-radius:999px;font-weight:600;">Open the ${esc(b.packTitle)}</a></p>
+        <p>If it helps you, a quick review or a share means a lot — and if you know someone who needs the same setup, send them my way.</p>
+        <p>Dan Adelusi<br/>AI Engineer · Co-founder, Mabi Labs</p>
       </div>
     `,
   });

@@ -5,7 +5,7 @@ import { Footer } from "@/components/layout/footer";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Container } from "@/components/layout/container";
 import { Reveal } from "@/components/motion/reveal";
-import { BookingForm } from "@/components/sections/booking-form";
+import { BookingWizard } from "@/components/sections/booking-wizard";
 
 export const metadata: Metadata = {
   title: "Book a Free AI Setup Session — Dan Adelusi",
@@ -37,7 +37,7 @@ export default function BookPage() {
       <Nav />
       <main id="main" className="pt-36 sm:pt-48">
         <Container>
-          <div className="mx-auto max-w-xl pb-24">
+          <div className="mx-auto max-w-2xl pb-24">
             <Reveal>
               <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-bone/50">
                 Free · 30 minutes · Video call
@@ -59,13 +59,13 @@ export default function BookPage() {
               <p className="mb-10 text-sm text-bone/50">
                 I&rsquo;m Dan Adelusi — AI engineer and co-founder of Mabi Labs.
                 I&rsquo;ve built AI systems for clients across the UK, US,
-                Canada, and Dubai. This session applies the same thinking to
-                your business.
+                Canada, and Dubai. Pick a time below — slots are my real, live
+                availability.
               </p>
             </Reveal>
             <Reveal delay={0.1}>
               <Suspense fallback={null}>
-                <BookingForm />
+                <BookingWizard />
               </Suspense>
             </Reveal>
           </div>

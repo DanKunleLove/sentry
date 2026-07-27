@@ -10,13 +10,35 @@ interface Booking {
   full_name: string;
   email: string;
   whatsapp: string;
+  social: string | null;
   role: string;
   need: string;
   source: string | null;
   status: "pending" | "approved" | "declined";
   admin_notes: string | null;
+  slot_start: string | null;
+  slot_end: string | null;
+  visitor_tz: string | null;
+  wants_resources: boolean;
+  resources_sent_at: string | null;
+  meet_link: string | null;
   created_at: string;
   updated_at: string;
+}
+
+function fmtSlot(iso: string): string {
+  return new Date(iso).toLocaleString("en-GB", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Africa/Lagos",
+  });
+}
+
+function socialHref(social: string): string {
+  return /^https?:\/\//i.test(social) ? social : `https://${social}`;
 }
 
 interface Stats {
@@ -110,7 +132,7 @@ export function AdminBookings() {
 
   async function patchBooking(
     id: string,
-    body: { status?: Booking["status"]; adminNotes?: string }
+    body: { status?: Booking["status"]; adminNotes?: string; sendResources?: true }
   ) {
     setBusyId(id);
     setError(null);
@@ -218,9 +240,19 @@ export function AdminBookings() {
                 >
                   {b.status}
                 </span>
+                {b.slot_start && (
+                  <span className="rounded-full bg-bone/8 px-3 py-1 font-mono text-[11px] tracking-wider text-bone/70">
+                    {fmtSlot(b.slot_start)} WAT
+                  </span>
+                )}
                 {b.source && (
                   <span className="rounded-full bg-accent-3/15 px-3 py-1 font-mono text-[11px] tracking-wider text-accent-3">
                     {b.source}
+                  </span>
+                )}
+                {b.wants_resources && (
+                  <span className="rounded-full bg-accent-2/15 px-3 py-1 font-mono text-[11px] tracking-wider text-accent-2">
+                    {b.resources_sent_at ? "resources sent" : "wants resources"}
                   </span>
                 )}
                 <span className="ml-auto font-mono text-[11px] text-bone/40">
@@ -246,6 +278,26 @@ export function AdminBookings() {
                 >
                   WhatsApp: {b.whatsapp}
                 </a>
+                {b.social && (
+                  <a
+                    href={socialHref(b.social)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-bone/70 hover:underline"
+                  >
+                    Social: {b.social}
+                  </a>
+                )}
+                {b.meet_link && (
+                  <a
+                    href={b.meet_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent hover:underline"
+                  >
+                    Meet link
+                  </a>
+                )}
               </div>
 
               {b.status === "pending" && (
@@ -267,6 +319,21 @@ export function AdminBookings() {
                   </Button>
                 </div>
               )}
+
+              {b.status === "approved" &&
+                b.wants_resources &&
+                !b.resources_sent_at && (
+                  <div className="mb-4">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={busyId === b.id}
+                      onClick={() => patchBooking(b.id, { sendResources: true })}
+                    >
+                      Send resources now
+                    </Button>
+                  </div>
+                )}
 
               <div className="flex items-end gap-3">
                 <div className="flex-1">

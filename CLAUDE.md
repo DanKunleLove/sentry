@@ -164,14 +164,24 @@ create table public.bookings (
   full_name text not null,
   email text not null,
   whatsapp text not null,
+  social text, -- vetting: applicant's social profile link
   role text not null,
   need text not null,
   source text, -- content pillar / platform attribution (?src= on /book)
   status text not null default 'pending', -- 'pending' | 'approved' | 'declined'
   admin_notes text,
+  slot_start timestamptz, -- picked session start (UTC)
+  slot_end timestamptz,
+  visitor_tz text, -- IANA tz detected in the browser
+  wants_resources boolean not null default false,
+  resources_sent_at timestamptz, -- stamped by the post-session cron / admin
+  calendar_event_id text, -- Google Calendar event created on approval
+  meet_link text, -- Google Meet link from that event
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+-- + partial unique index on slot_start where status in ('pending','approved')
+--   (one active claim per slot — see scripts/bookings.sql)
 
 create table public.rate_log (
   ip text not null,
