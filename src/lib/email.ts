@@ -121,7 +121,7 @@ function fmtSlot(iso: string, tz?: string): string {
 function slotLine(slotStart: string, visitorTz?: string): string {
   const local = fmtSlot(slotStart, visitorTz);
   const wat = fmtSlot(slotStart, "Africa/Lagos");
-  return local === wat ? esc(local) : `${esc(local)} <span style="color:#666;">(${esc(wat)} WAT)</span>`;
+  return local === wat ? esc(local) : `${esc(local)} <span style="color:${B.muted};">(${esc(wat)} WAT)</span>`;
 }
 
 /** Ensure a social handle/link renders as a clickable URL. */
@@ -129,8 +129,78 @@ function socialHref(social: string): string {
   return /^https?:\/\//i.test(social) ? social : `https://${social}`;
 }
 
-const btn = (href: string, label: string, bg: string) =>
-  `<a href="${href}" style="display:inline-block;background:${bg};color:#fff;text-decoration:none;padding:12px 28px;border-radius:999px;font-weight:600;margin-right:12px;">${label}</a>`;
+/* ── Branded email design system ─────────────────────────────────────────
+   Editorial take on the site's ink/bone/molten-orange palette, adapted for
+   email clients: table-free flow layout, inline styles only, light body for
+   deliverability, serif display headings, pill buttons. */
+
+const B = {
+  ink: "#0A0A0C",
+  bone: "#F5F1E8",
+  canvas: "#EFEBE2",
+  card: "#F7F4EE",
+  border: "#E7E2D8",
+  text: "#1F1D1A",
+  muted: "#6B675F",
+  accent: "#FF5B1F",
+} as const;
+
+const F_SANS =
+  "-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+const F_SERIF = "Georgia,'Times New Roman',serif";
+
+/** Outer frame: dark wordmark header, white body card, muted footer. */
+function shell(opts: { preheader: string; body: string }): string {
+  return `
+  <div style="background:${B.canvas};padding:32px 16px;font-family:${F_SANS};">
+    <span style="display:none;max-height:0;overflow:hidden;">${esc(opts.preheader)}</span>
+    <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid ${B.border};">
+      <div style="background:${B.ink};padding:20px 36px;">
+        <span style="font-family:${F_SERIF};font-size:19px;color:${B.bone};">Dan&nbsp;Adelusi</span>
+        <span style="color:${B.accent};font-size:19px;">.</span>
+        <span style="float:right;font-size:10px;letter-spacing:3px;color:#8a877f;text-transform:uppercase;padding-top:7px;">AI&nbsp;Engineer</span>
+      </div>
+      <div style="padding:36px;color:${B.text};font-size:15px;line-height:1.65;">
+        ${opts.body}
+      </div>
+      <div style="padding:22px 36px;border-top:1px solid ${B.border};font-size:12px;color:${B.muted};line-height:1.7;">
+        Dan Adelusi — AI Engineer · Co-founder, Mabi Labs<br/>
+        <a href="https://adelusidankunle.vercel.app" style="color:${B.accent};text-decoration:none;">adelusidankunle.vercel.app</a>
+        &nbsp;·&nbsp;<a href="https://www.instagram.com/dankunleai" style="color:${B.muted};text-decoration:none;">Instagram</a>
+        &nbsp;·&nbsp;<a href="https://www.tiktok.com/@dkl612" style="color:${B.muted};text-decoration:none;">TikTok</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+/** Serif display heading. */
+const h1 = (text: string) =>
+  `<h1 style="font-family:${F_SERIF};font-weight:normal;font-size:26px;line-height:1.25;color:${B.ink};margin:0 0 18px;">${text}</h1>`;
+
+/** Highlighted card for the session time. */
+const slotCard = (inner: string) =>
+  `<div style="background:${B.card};border-left:3px solid ${B.accent};border-radius:14px;padding:18px 22px;margin:22px 0;font-family:${F_SERIF};font-size:17px;color:${B.ink};">${inner}</div>`;
+
+/** Primary pill button. */
+const btn = (href: string, label: string, bg: string = B.accent) =>
+  `<a href="${href}" style="display:inline-block;background:${bg};color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:999px;font-weight:600;font-size:15px;margin:4px 12px 4px 0;">${label}</a>`;
+
+/** Secondary bordered pill button. */
+const btnGhost = (href: string, label: string) =>
+  `<a href="${href}" style="display:inline-block;background:#ffffff;color:${B.text};text-decoration:none;padding:13px 31px;border-radius:999px;font-weight:600;font-size:15px;border:1px solid ${B.border};margin:4px 12px 4px 0;">${label}</a>`;
+
+/** Label/value detail rows. */
+function infoRows(rows: [string, string][]): string {
+  return `<table style="border-collapse:collapse;width:100%;margin:18px 0;">${rows
+    .map(
+      ([label, value]) =>
+        `<tr>
+          <td style="padding:7px 16px 7px 0;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${B.muted};white-space:nowrap;vertical-align:top;">${label}</td>
+          <td style="padding:7px 0;font-size:14px;color:${B.text};">${value}</td>
+        </tr>`
+    )
+    .join("")}</table>`;
+}
 
 /**
  * Notify Dan about a new /book request — includes the picked slot, the
@@ -144,28 +214,30 @@ export async function notifyBookingEmail(
   return sendEmail({
     to: process.env.NOTIFICATION_EMAIL || undefined,
     subject: `📅 Session request: ${b.fullName}${b.slotStart ? ` — ${fmtSlot(b.slotStart, "Africa/Lagos")}` : ""}`,
-    html: `
-      <h2>New session request from /book</h2>
-      ${b.slotStart ? `<p style="font-size:16px;"><strong>Requested slot:</strong> ${fmtSlot(b.slotStart, "Africa/Lagos")} WAT</p>` : ""}
-      <table style="border-collapse:collapse;font-family:sans-serif;">
-        <tr><td style="padding:4px 12px 4px 0;color:#666;">Name</td><td>${esc(b.fullName)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666;">Email</td><td><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666;">WhatsApp</td><td><a href="https://wa.me/${waDigits}">${esc(b.whatsapp)}</a></td></tr>
-        ${b.social ? `<tr><td style="padding:4px 12px 4px 0;color:#666;">Social</td><td><a href="${esc(socialHref(b.social))}">${esc(b.social)}</a></td></tr>` : ""}
-        <tr><td style="padding:4px 12px 4px 0;color:#666;">Role</td><td>${esc(b.role)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666;">Source</td><td>${esc(b.source || "direct")}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#666;">Resources</td><td>${b.wantsResources ? "wants the pack (auto-sends after session)" : "no"}</td></tr>
-      </table>
-      <h3>What they want from the session</h3>
-      <p style="background:#f5f5f5;padding:12px;border-radius:8px;">${esc(b.need)}</p>
-      ${
-        actions
-          ? `<p style="margin:24px 0;">${btn(actions.approveUrl, "✓ Approve", "#1a7f37")}${btn(actions.declineUrl, "✕ Decline", "#57606a")}</p>
-             <p style="color:#666;font-size:12px;">Approving creates the calendar event + Google Meet link and confirms with them automatically. Buttons open a confirmation page — nothing happens on a stray click.</p>`
-          : `<p style="margin-top:16px;color:#666;font-size:12px;">Approve or decline in the admin panel.</p>`
-      }
-      <p style="margin-top:16px;color:#666;font-size:12px;">Sent by Sentry · ${new Date().toISOString()}</p>
-    `,
+    html: shell({
+      preheader: `${b.fullName} wants a session${b.slotStart ? ` — ${fmtSlot(b.slotStart, "Africa/Lagos")} WAT` : ""}`,
+      body: `
+        ${h1("New session request")}
+        ${b.slotStart ? slotCard(`${fmtSlot(b.slotStart, "Africa/Lagos")} <span style="color:${B.muted};font-family:${F_SANS};font-size:13px;">WAT</span>`) : ""}
+        ${infoRows([
+          ["Name", esc(b.fullName)],
+          ["Email", `<a href="mailto:${esc(b.email)}" style="color:${B.accent};text-decoration:none;">${esc(b.email)}</a>`],
+          ["WhatsApp", `<a href="https://wa.me/${waDigits}" style="color:${B.accent};text-decoration:none;">${esc(b.whatsapp)}</a>`],
+          ...(b.social ? [["Social", `<a href="${esc(socialHref(b.social))}" style="color:${B.accent};text-decoration:none;">${esc(b.social)}</a>`] as [string, string]] : []),
+          ["Role", esc(b.role)],
+          ["Source", esc(b.source || "direct")],
+          ["Resources", b.wantsResources ? "wants the pack (auto-sends after session)" : "no"],
+        ])}
+        <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${B.muted};margin:20px 0 8px;">What they want</p>
+        <div style="background:${B.card};border-radius:14px;padding:16px 20px;">${esc(b.need)}</div>
+        ${
+          actions
+            ? `<div style="margin:26px 0 6px;">${btn(actions.approveUrl, "Approve session")}${btnGhost(actions.declineUrl, "Decline")}</div>
+               <p style="color:${B.muted};font-size:12px;">Approving creates the calendar event + Google Meet link and confirms with them automatically. Buttons open a confirmation page — nothing happens on a stray click.</p>`
+            : `<p style="color:${B.muted};font-size:12px;margin-top:20px;">Approve or decline in the admin panel.</p>`
+        }
+      `,
+    }),
   });
 }
 
@@ -181,15 +253,20 @@ export async function bookingReceivedEmail(b: {
     to: b.email,
     fromName: "Dan Adelusi",
     subject: "Got your session request — confirming shortly",
-    html: `
-      <div style="font-family:sans-serif;max-width:560px;">
-        <p>Hi ${esc(firstName)},</p>
-        <p>Your free AI setup session request is in for:</p>
-        <p style="background:#f5f5f5;padding:12px;border-radius:8px;font-size:16px;"><strong>${slotLine(b.slotStart, b.visitorTz)}</strong></p>
-        <p>I personally review every request. You'll get a confirmation email with your Google Meet link shortly — usually within a few hours.</p>
-        <p>Talk soon,<br/>Dan Adelusi<br/>AI Engineer · Co-founder, Mabi Labs</p>
-      </div>
-    `,
+    html: shell({
+      preheader: "Your free AI setup session request is in — confirmation coming shortly.",
+      body: `
+        ${h1(`Your request is in, ${esc(firstName)}.`)}
+        <p style="margin:0 0 4px;">Your free AI setup session is penciled in for:</p>
+        ${slotCard(slotLine(b.slotStart, b.visitorTz))}
+        ${infoRows([
+          ["Next", "I personally review every request — expect your confirmation within a few hours."],
+          ["Then", "Your confirmation email arrives with the Google Meet link and a calendar invite."],
+          ["Prepare", "Come with your workflow or problem in mind. Specific beats general."],
+        ])}
+        <p style="margin:22px 0 0;">Talk soon,<br/><span style="font-family:${F_SERIF};font-size:16px;">Dan Adelusi</span><br/><span style="color:${B.muted};font-size:13px;">AI Engineer · Co-founder, Mabi Labs</span></p>
+      `,
+    }),
   });
 }
 
@@ -206,21 +283,22 @@ export async function bookingApprovedEmail(b: {
     to: b.email,
     fromName: "Dan Adelusi",
     subject: "Your free AI setup session is confirmed ✓",
-    html: `
-      <div style="font-family:sans-serif;max-width:560px;">
-        <p>Hi ${esc(firstName)},</p>
-        <p>Confirmed — your free AI setup session is locked in${b.slotStart ? " for:" : "."}</p>
-        ${b.slotStart ? `<p style="background:#f5f5f5;padding:12px;border-radius:8px;font-size:16px;"><strong>${slotLine(b.slotStart, b.visitorTz ?? undefined)}</strong></p>` : ""}
+    html: shell({
+      preheader: "Locked in — your Google Meet link and calendar invite are ready.",
+      body: `
+        ${h1(`You're locked in, ${esc(firstName)}.`)}
+        <p style="margin:0 0 4px;">Your free AI setup session is confirmed${b.slotStart ? " for:" : "."}</p>
+        ${b.slotStart ? slotCard(slotLine(b.slotStart, b.visitorTz ?? undefined)) : ""}
         ${
           b.meetLink
-            ? `<p style="margin:24px 0;"><a href="${esc(b.meetLink)}" style="display:inline-block;background:#1a7f37;color:#fff;text-decoration:none;padding:12px 28px;border-radius:999px;font-weight:600;">Join on Google Meet</a></p>
-               <p style="color:#666;font-size:13px;">You'll also find this link in the calendar invite that just landed in your inbox.</p>`
+            ? `<div style="margin:26px 0 10px;">${btn(esc(b.meetLink), "Join on Google Meet")}</div>
+               <p style="color:${B.muted};font-size:13px;margin:0 0 18px;">The same link is in the calendar invite that just landed in your inbox — you'll get a reminder 30 minutes before we start.</p>`
             : `<p>A calendar invite with the video call link is on its way to this email address.</p>`
         }
         <p>Come with your workflow or problem in mind — the more specific, the more we get done in 30 minutes.</p>
-        <p>Talk soon,<br/>Dan Adelusi<br/>AI Engineer · Co-founder, Mabi Labs</p>
-      </div>
-    `,
+        <p style="margin:22px 0 0;">Talk soon,<br/><span style="font-family:${F_SERIF};font-size:16px;">Dan Adelusi</span><br/><span style="color:${B.muted};font-size:13px;">AI Engineer · Co-founder, Mabi Labs</span></p>
+      `,
+    }),
   });
 }
 
@@ -235,15 +313,16 @@ export async function bookingDeclinedEmail(b: {
     to: b.email,
     fromName: "Dan Adelusi",
     subject: "About your AI setup session request",
-    html: `
-      <div style="font-family:sans-serif;max-width:560px;">
-        <p>Hi ${esc(firstName)},</p>
+    html: shell({
+      preheader: "That slot didn't work out — pick another time in one click.",
+      body: `
+        ${h1(`Hi ${esc(firstName)},`)}
         <p>Thanks for requesting a free AI setup session. I couldn't take this one — the slot didn't work out on my end.</p>
-        ${b.rebookUrl ? `<p style="margin:24px 0;"><a href="${esc(b.rebookUrl)}" style="display:inline-block;background:#0969da;color:#fff;text-decoration:none;padding:12px 28px;border-radius:999px;font-weight:600;">Pick another time</a></p>` : ""}
-        <p>In the meantime, my content on Instagram and TikTok (@dankunleai) covers a lot of what we'd discuss.</p>
-        <p>Thanks for your patience,<br/>Dan Adelusi<br/>AI Engineer · Co-founder, Mabi Labs</p>
-      </div>
-    `,
+        ${b.rebookUrl ? `<div style="margin:26px 0;">${btn(esc(b.rebookUrl), "Pick another time")}</div>` : ""}
+        <p>In the meantime, my content on <a href="https://www.instagram.com/dankunleai" style="color:${B.accent};text-decoration:none;">Instagram</a> and <a href="https://www.tiktok.com/@dkl612" style="color:${B.accent};text-decoration:none;">TikTok</a> covers a lot of what we'd discuss.</p>
+        <p style="margin:22px 0 0;">Thanks for your patience,<br/><span style="font-family:${F_SERIF};font-size:16px;">Dan Adelusi</span><br/><span style="color:${B.muted};font-size:13px;">AI Engineer · Co-founder, Mabi Labs</span></p>
+      `,
+    }),
   });
 }
 
@@ -260,16 +339,17 @@ export async function resourcesEmail(b: {
     to: b.email,
     fromName: "Dan Adelusi",
     subject: `Your ${b.packTitle} — as promised`,
-    html: `
-      <div style="font-family:sans-serif;max-width:560px;">
-        <p>Hi ${esc(firstName)},</p>
+    html: shell({
+      preheader: `${b.packTitle} — everything from our session, ready to use.`,
+      body: `
+        ${h1(`As promised, ${esc(firstName)}.`)}
         <p>Great session — here's the resource pack I promised:</p>
-        <p>${esc(b.packBlurb)}</p>
-        <p style="margin:24px 0;"><a href="${esc(b.packUrl)}" style="display:inline-block;background:#0969da;color:#fff;text-decoration:none;padding:12px 28px;border-radius:999px;font-weight:600;">Open the ${esc(b.packTitle)}</a></p>
+        ${slotCard(`${esc(b.packTitle)}<br/><span style="font-family:${F_SANS};font-size:13px;color:${B.muted};">${esc(b.packBlurb)}</span>`)}
+        <div style="margin:26px 0;">${btn(esc(b.packUrl), "Open the pack")}</div>
         <p>If it helps you, a quick review or a share means a lot — and if you know someone who needs the same setup, send them my way.</p>
-        <p>Dan Adelusi<br/>AI Engineer · Co-founder, Mabi Labs</p>
-      </div>
-    `,
+        <p style="margin:22px 0 0;"><span style="font-family:${F_SERIF};font-size:16px;">Dan Adelusi</span><br/><span style="color:${B.muted};font-size:13px;">AI Engineer · Co-founder, Mabi Labs</span></p>
+      `,
+    }),
   });
 }
 
